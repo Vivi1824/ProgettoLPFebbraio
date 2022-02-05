@@ -17,7 +17,11 @@
 )
 
 (defun string-to-list(str)
-  (let string (coerce str 'list))
+  (let newlist (coerce str 'list)) ;converte la stringa in una lista con #/
+  (cond((null newList)0)
+       ((let newstring(car newlist))
+        (string-trim "#/" newstring)))) ;non so se va
+        ;devo creare nuova lista con elementi sistemati
+
   ;bisogna ora capire come suddividere la lista nelle stringhe che vogliamo
-)
 
