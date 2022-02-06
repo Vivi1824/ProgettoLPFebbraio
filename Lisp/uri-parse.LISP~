@@ -1,2 +1,48 @@
 ;Giuliani Viviana 875068
 ;Daniel Marco Gatti 869310
+
+(defstruct (uri(:constructor create-uri( 
+  (scheme :type string) 
+  (user_info :type string)
+  (host :type string)
+  (port :type int)
+  (path :type string)
+  (query :type string)
+  (fragment :type string)
+))))
+
+(defun uri-parse(uri-structure)
+  (let newlist(coerce uri-structure 'list))
+  ;(format nil "~{~a~}"(coerce uri-structure 'list)) ;prende gli elementi della lista e li formatta come stringa
+)
+;map nil #'princ   questo serve per levare i # 
+
+(defun uri-scheme(disco)
+  (cond((null disco)nil)
+       (if((eql(car disco)#\h)
+       (cons(car disco)(uri-scheme (cdr disco)))))))
+
+
+(defun uri-userinfo(disco))
+
+(defun uri-host(disco))
+
+(defun uri-host(disco))
+
+(defun uri-port(disco))
+
+(defun uri-path(disco))
+
+(defun uri-query(disco))
+
+(defun uri-fragment(disco))
+
+(defun uri-display(disco))
+          
+
+;devo creare nuova lista con elementi sistemati
+;bisogna ora capire come suddividere la lista nelle stringhe che vogliamo
+
+
+;(defun my-concat( list ) ;per concatenare
+  ;(format nil "~{~a~}" list))

@@ -11,17 +11,38 @@
   (fragment :type string)
 ))))
 
-(defun uri-parse(uri-structure) ;Questa funzione deve ritornare una struttura con i 7 campi della uri. Idea mia: prendo la stringa e la faccio diventare una lista dove ogni elemento con posizione sarà assegnato a un determinato campo
-   (cond((streamp uri-structure)
-         (string-to-list(uri-structure))))
+(defun uri-parse(uri-structure)
+  (let newlist(coerce uri-structure 'list))
+  ;(format nil "~{~a~}"(coerce uri-structure 'list)) ;prende gli elementi della lista e li formatta come stringa
 )
+;map nil #'princ   questo serve per levare i # 
 
-(defun string-to-list(str)
-  (let newlist (coerce str 'list)) ;converte la stringa in una lista con #/
-  (cond((null newList)0)
-       ((let newstring(car newlist))
-        (string-trim "#/" newstring)))) ;non so se va
-        ;devo creare nuova lista con elementi sistemati
+(defun uri-scheme(disco)
+  (cond((null disco)nil)
+       ((if(or(eql(car disco)#\h)(eql(car disco)#\t)(eql(car disco)#\p))
+       (cons(car disco)(uri-scheme (cdr disco)))))))
 
-  ;bisogna ora capire come suddividere la lista nelle stringhe che vogliamo
 
+(defun uri-userinfo(disco))
+
+(defun uri-host(disco))
+
+(defun uri-host(disco))
+
+(defun uri-port(disco))
+
+(defun uri-path(disco))
+
+(defun uri-query(disco))
+
+(defun uri-fragment(disco))
+
+(defun uri-display(disco))
+          
+
+;devo creare nuova lista con elementi sistemati
+;bisogna ora capire come suddividere la lista nelle stringhe che vogliamo
+
+
+;(defun my-concat( list ) ;per concatenare
+  ;(format nil "~{~a~}" list))
