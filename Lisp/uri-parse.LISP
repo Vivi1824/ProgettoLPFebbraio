@@ -1,5 +1,20 @@
+;======================================
+;STUDENTI DEL GRUPPO               
+;======================================
 ;Giuliani Viviana 875068
 ;Daniel Marco Gatti 869310
+;======================================
+;PROGETTO APPELLO DEL 25 FEBBRAIO 2022
+;======================================
+
+;======================================
+;COSE DA FARE
+;1) capire come si fa la cancellazione degli elementi dalle liste 
+;   dopo aver fatto la cons
+;2) creare tutti i controlli per la sintassi dei campi
+;3) capire come assegnare i vari risultati delle funzioni alla defstruct
+;4) 
+;====================================== 
 
 (defstruct (uri(:constructor create-uri( 
   (scheme :type string) 
@@ -18,30 +33,83 @@
 ;map nil #'princ   questo serve per levare i # 
 
 (defun uri-scheme(disco)
+   (cond((null disco)nil)
+        ((if(or(eql(car disco)#\h)(eql(car disco)#\t)(eql(car disco)#\p))
+         (cons(car disco)(uri-scheme(cdr disco))))))
+   ; manca la cancellazione degli elementi dalla lista
+)
+(defun uri-userinfo(disco);senza la cancellazione
+    (cond((null disco)nil)
+         ((if(or(not(eql(car disco)#\@)))
+         (cons(car disco)(uri-userinfo(cdr disco))))))
+)
+
+(defun uri-host(disco)) ;serve cancellazione
+
+(defun uri-port(disco);serve cancellazione
   (cond((null disco)nil)
-       ((if(or(eql(car disco)#\h)(eql(car disco)#\t)(eql(car disco)#\p))
-       (cons(car disco)(uri-scheme (cdr disco)))))))
+       ((if(or(eql(car disco)#\8)(eql(car disco)#\0))
+           (cons(car disco)(uri-port(cdr disco))))))
+       ;bisogna convertire in numero
+)
+     
+(defun uri-path(disco) ;serve cancellazione
+  (cond((null disco)nil)
+       ((if(or(not(eql(car disco)#\?)))
+         (cons(car disco)(uri-path(cdr disco))))))
+)
+(defun uri-query(disco) ;serve cancellazione
+  (cond((null disco)nil)
+        ((if(or(not(eql(car disco)#\#)))
+         (cons(car disco)(uri-query(cdr disco))))))
+)
 
-
-(defun uri-userinfo(disco))
-
-(defun uri-host(disco))
-
-(defun uri-host(disco))
-
-(defun uri-port(disco))
-
-(defun uri-path(disco))
-
-(defun uri-query(disco))
-
-(defun uri-fragment(disco))
+(defun uri-fragment(disco)
+  (cond((null disco)nil)
+         (cons(car disco)(uri-fragment(cdr disco))))
+)
 
 (defun uri-display(disco))
           
+(defun scheme-mailto(disco)
+  (cond((null disco)nil)
+        ((if(or(eql(car disco)#\m)(eql(car disco)#\a)
+               (eql(car disco)#\i)(eql(car disco)#\l)
+               (eql(car disco)#\t)(eql(car disco)#\o))
+         (cons(car disco)(scheme-mailto(cdr disco))))))
+   ; manca la cancellazione degli elementi dalla lista
+)
 
-;devo creare nuova lista con elementi sistemati
-;bisogna ora capire come suddividere la lista nelle stringhe che vogliamo
+(defun scheme-news(disco)
+  (cond((null disco)nil)
+        ((if(or(eql(car disco)#\n)(eql(car disco)#\e)
+               (eql(car disco)#\w)(eql(car disco)#\s))
+         (cons(car disco)(scheme-news(cdr disco))))))
+   ; manca la cancellazione degli elementi dalla lista
+)
+
+(defun scheme-tel(disco)
+  (cond((null disco)nil)
+        ((if(or(eql(car disco)#\t)(eql(car disco)#\e)(eql(car disco)#\l))
+         (cons(car disco)(scheme-tel(cdr disco))))))
+   ; manca la cancellazione degli elementi dalla lista
+)
+
+(defun scheme-fax(disco)
+  (cond((null disco)nil)
+        ((if(or(eql(car disco)#\f)(eql(car disco)#\a)(eql(car disco)#\x))
+         (cons(car disco)(scheme-fax(cdr disco))))))
+   ; manca la cancellazione degli elementi dalla lista
+)
+
+(defun scheme-zos(disco)
+  (cond((null disco)nil)
+        ((if(or(eql(car disco)#\l)(eql(car disco)#\d)
+               (eql(car disco)#\a)(eql(car disco)#\p))
+         (cons(car disco)(scheme-zos(cdr disco))))))
+   ; manca la cancellazione degli elementi dalla lista
+)
+
 
 
 ;(defun my-concat( list ) ;per concatenare
