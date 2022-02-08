@@ -63,15 +63,47 @@
   (if(equal(coerce "http" 'list)(uri-scheme disco))
       (uri-host-http disco)
   )
+  ;(if(equal(coerce "mailto" 'list)(uri-scheme disco))(uri-host-mailto disco))
+  ;(if(equal(coerce "news" 'list)(uri-scheme disco))(uri-host-news disco))
+  ;(if(equal(coerce "tel" 'list)(uri-scheme disco))(uri-host-tel disco))
+  ;(if(equal(coerce "fax" 'list)(uri-scheme disco))(uri-host-fax disco))
+  ;(if(equal(coerce "zos" 'list)(uri-scheme disco))(uri-host-zos disco))
 )
 
 (defun uri-host-http(disco)
-  (cond((null disco)nil)
-        ((if(eql(car disco)#\/)
-        (cons(car disco)(uri-host-http(cdr disco)))))) 
-       
-         
+   ;Si deve ricavare la stringa presente dopo :// e prima dei :
+  (sub-list disco 7 nil)
+  
+)
+
+(defun sub-list ( lst idx len )
+    (cond
+        (   (null lst) nil)
+        (   (< 0  idx) (sub-list (cdr lst) (1- idx) len))
+        (   (null len) lst)
+        (   (< 0  len) (cons (car lst) (sub-list (cdr lst) idx (1- len))))
+    )
+)
+
+(defun uri-host-mailto(disco)
+  (write "mailto function")
 ) 
+
+(defun uri-host-news(disco)
+  (write "news function")
+)
+
+(defun uri-host-tel(disco)
+  (write "tel function")
+)
+
+(defun uri-host-fax(disco)
+  (write "fax function")
+)
+
+(defun uri-host-zos(disco)
+  (write "zos function")
+)
 
 ;(defun delete-after-host(disco)
  ; (cond((null disco)nil)
