@@ -51,10 +51,11 @@
 ;===================================================
   ;URI-USERINFO
 ;===================================================
-(defun uri-userinfo(disco);senza la cancellazione
-    (cond((null disco)nil)
+(defun uri-userinfo(disco);senza la cancellazione  
+  (cond((null disco)nil)
          ((if(or(not(eql(car disco)#\@)))
          (cons(car disco)(uri-userinfo(cdr disco))))))
+    
 )
 
 ;====================================================
@@ -75,7 +76,7 @@
 )
 
 (defun uri-host-mailto(disco)
-  (write "mailto function")
+ 
 ) 
 
 (defun uri-host-news(disco)
