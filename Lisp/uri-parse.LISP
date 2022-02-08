@@ -61,16 +61,12 @@
   ;URI-HOST
 ;====================================================
 (defun uri-host(disco)
-  (cond((equal(coerce "http" 'list)(uri-scheme disco))
-      (uri-host-http disco))
+  (cond((equal(coerce "http" 'list)(uri-scheme disco))(uri-host-http disco))
        (t(cond((equal(coerce "mailto" 'list)(uri-scheme disco))(uri-host-mailto disco))
-         (t(cond((equal(coerce "news" 'list)(uri-scheme disco))(uri-host-news disco))) )
-       ))
-))
-
-  ;(cond((equal(coerce "mailto" 'list)(uri-scheme disco))(uri-host-mailto disco)))
-  
-
+         (t(cond((equal(coerce "news" 'list)(uri-scheme disco))(uri-host-news disco))
+            (t(cond((equal(coerce "tel" 'list)(uri-scheme disco))(uri-host-tel disco))
+               (t(cond((equal(coerce "fax" 'list)(uri-scheme disco))(uri-host-fax disco))
+                  (t(cond((equal(coerce "zos" 'list)(uri-scheme disco))(uri-host-zos disco))))))))))))))
 
 (defun uri-host-http(disco)
    ;Si deve ricavare la stringa presente dopo :// e prima dei :
