@@ -57,10 +57,21 @@
 ;)
 
 (defun uri-host(disco)
-    (cond((null disco)nil)
-         ((if(or(not(eql(car disco)#\:)))
-         (cons(car disco)(uri-host(cdr disco))))))
-) ;serve cancellazione da disco
+    ;(cond((null disco)nil)
+         ;((if(or(not(eql(car disco)#\:)))
+         ;(cons(car disco)(uri-host(cdr disco))))))
+  (if(equal(coerce "http" 'list)(uri-scheme disco))
+      (uri-host-http disco)
+  )
+)
+
+(defun uri-host-http(disco)
+  (cond((null disco)nil)
+        ((if(eql(car disco)#\/)
+        (cons(car disco)(uri-host-http(cdr disco)))))) 
+       
+         
+) 
 
 ;(defun delete-after-host(disco)
  ; (cond((null disco)nil)

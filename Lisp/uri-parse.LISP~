@@ -14,6 +14,8 @@
 ;2) creare tutti i controlli per la sintassi dei campi
 ;3) capire come assegnare i vari risultati delle funzioni alla defstruct
 ;4) 
+;L'idea è che venga analizzato prima lo scheme e poi in base a quello che viene 
+;riconosciuto allora si va ad analizzare il resto della stringa
 ;====================================== 
 
 (defstruct (uri(:constructor create-uri( 
@@ -29,27 +31,17 @@
 (defun uri-parse(uri-structure)
   (let newlist(coerce uri-structure 'list))
   ;(format nil "~{~a~}"(coerce uri-structure 'list)) ;prende gli elementi della lista e li formatta come stringa
-  (uri-scheme(uri-structure))
-  (uri-delete-after-scheme(uri-structure))
 )
 ;map nil #'princ   questo serve per levare i # 
 
 (defun uri-scheme(disco)
    (cond((null disco)nil)
-        ((if(or(eql(car disco)#\h)(eql(car disco)#\t)(eql(car disco)#\p)) ;if-part
-            (let x(cons(car disco)(uri-scheme(cdr disco))))
-        ;(write x) con questo si cancellano i caratteri in disco ma non stampa
-   ))) 
-   
-   ; manca la cancellazione degli elementi dalla lista
-)
-
-
-(defun delete-after-scheme(disco) ;funzione che va a riconoscere :// che poi sono da togliere
-  (cond((null disco)nil)
-       ((if(or(eql(car disco)#\:)(eql(car disco)#\/))
-           (cons(car disco)(delete-after-scheme(cdr disco))))))
-  ;manca la cancellazione 
+        ((if(or(eql(car disco)#\h)(eql(car disco)#\t)(eql(car disco)#\p)
+               (eql(car disco)#\m)(eql(car disco)#\a)(eql(car disco)#\i)(eql(car disco)#\l)
+               (eql(car disco)#\o)(eql(car disco)#\n)(eql(car disco)#\e)(eql(car disco)#\w)
+               (eql(car disco)#\s)(eql(car disco)#\f)(eql(car disco)#\x)(eql(car disco)#\z)) ;if-part
+            (let x(cons(car disco)(uri-scheme(cdr disco)))))) 
+   )
 )
 
 (defun uri-userinfo(disco);senza la cancellazione
@@ -58,23 +50,30 @@
          (cons(car disco)(uri-userinfo(cdr disco))))))
 )
 
-(defun delete-after-user-info (disco)
-  (cond((null disco)nil)
-       ((if(or(eql(car disco)#\@))
-           (cons(cdr disco)(delete-after-user-info(cdr disco))))))
-)
+;(defun delete-after-user-info (disco)
+ ; (cond((null disco)nil)
+  ;     ((if(or(eql(car disco)#\@))
+   ;        (cons(cdr disco)(delete-after-user-info(cdr disco))))))
+;)
 
 (defun uri-host(disco)
-    (cond((null disco)nil)
-         ((if(or(not(eql(car disco)#\:)))
-         (cons(car disco)(uri-host(cdr disco))))))
-) ;serve cancellazione da disco
+    ;(cond((null disco)nil)
+         ;((if(or(not(eql(car disco)#\:)))
+         ;(cons(car disco)(uri-host(cdr disco))))))
+  (if(equal(coerce "http" 'list)(uri-scheme disco))
+      (member '#\h disco :test-not #'eq)
+      (member '#\t disco :test-not #'eq)
+      (member '#\p disco :test-not #'eq)
+      (member '#\/ disco :test-not #'eq)
+  )
+  
+) 
 
-(defun delete-after-host(disco)
-  (cond((null disco)nil)
-       ((if(or(eql(car disco)#\:))
-           (cons(car disco)(delete-after-host(cdr disco))))))
-)
+;(defun delete-after-host(disco)
+ ; (cond((null disco)nil)
+  ;     ((if(or(eql(car disco)#\:))
+   ;        (cons(car disco)(delete-after-host(cdr disco))))))
+;)
 
 (defun uri-port(disco);serve cancellazione
   (cond((null disco)nil)
@@ -101,44 +100,6 @@
 
 (defun uri-display(disco))
           
-(defun scheme-mailto(disco)
-  (cond((null disco)nil)
-        ((if(or(eql(car disco)#\m)(eql(car disco)#\a)
-               (eql(car disco)#\i)(eql(car disco)#\l)
-               (eql(car disco)#\t)(eql(car disco)#\o))
-         (cons(car disco)(scheme-mailto(cdr disco))))))
-   ; manca la cancellazione degli elementi dalla lista
-)
-
-(defun scheme-news(disco)
-  (cond((null disco)nil)
-        ((if(or(eql(car disco)#\n)(eql(car disco)#\e)
-               (eql(car disco)#\w)(eql(car disco)#\s))
-         (cons(car disco)(scheme-news(cdr disco))))))
-   ; manca la cancellazione degli elementi dalla lista
-)
-
-(defun scheme-tel(disco)
-  (cond((null disco)nil)
-        ((if(or(eql(car disco)#\t)(eql(car disco)#\e)(eql(car disco)#\l))
-         (cons(car disco)(scheme-tel(cdr disco))))))
-   ; manca la cancellazione degli elementi dalla lista
-)
-
-(defun scheme-fax(disco)
-  (cond((null disco)nil)
-        ((if(or(eql(car disco)#\f)(eql(car disco)#\a)(eql(car disco)#\x))
-         (cons(car disco)(scheme-fax(cdr disco))))))
-   ; manca la cancellazione degli elementi dalla lista
-)
-
-(defun scheme-zos(disco)
-  (cond((null disco)nil)
-        ((if(or(eql(car disco)#\l)(eql(car disco)#\d)
-               (eql(car disco)#\a)(eql(car disco)#\p))
-         (cons(car disco)(scheme-zos(cdr disco))))))
-   ; manca la cancellazione degli elementi dalla lista
-)
 
 
 
