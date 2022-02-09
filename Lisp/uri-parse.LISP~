@@ -51,20 +51,26 @@
 ;===================================================
   ;URI-USERINFO
 ;===================================================
-(defun uri-userinfo(disco);senza la cancellazione  
-  (cond((null disco)nil
-       (t(uri-userinfo(car disco))))
-       ((if(or(not(eql(car disco)#\@)))
-         (cons(car disco)(uri-userinfo(cdr disco))))))
-    
+(defun uri-userinfo(disco);senza la cancellazione
+  (cond((equal(coerce "mailto" 'list)(uri-scheme disco))(uri-userinfo-mailto disco))
+       (t(cond((equal(coerce "tel" 'list)(uri-scheme disco))(uri-userinfo-tel disco))
+         (t(cond((equal(coerce "fax" 'list)(uri-scheme disco))(uri-userinfo-fax disco)))))))
 )
 
+(defun uri-userinfo-mailto(disco)
+  (cond((null disco)nil)
+       ((eql(car disco)#\:)(cdr disco)) 
+       (t(uri-userinfo-mailto(cdr disco))))
+)
+(defun uri-userinfo-tel(disco))
+(defun uri-userinfo-fax(disco))
+;potrei prendere la lista e crearne una nuova con solo i caratteri che mi servono
 ;====================================================
   ;URI-HOST
 ;====================================================
 (defun uri-host(disco)
   (cond((equal(coerce "http" 'list)(uri-scheme disco))(uri-host-http disco))
-       (t(cond((equal(coerce "mailto" 'list)(uri-scheme disco))(uri-host-mailto disco))
+       (t(cond((equal(coerce "mailto" 'list)(uri-scheme disco))(uri-host-mailto disco))        
          (t(cond((equal(coerce "news" 'list)(uri-scheme disco))(uri-host-news disco))
             (t(cond((equal(coerce "tel" 'list)(uri-scheme disco))(uri-host-tel disco))
                (t(cond((equal(coerce "fax" 'list)(uri-scheme disco))(uri-host-fax disco))
@@ -77,12 +83,12 @@
 )
 
 (defun uri-host-mailto(disco)
- 
-) 
+  (cond((null disco)nil)
+       ((eql(car disco)#\@)(cdr disco))
+       (t(uri-host-mailto(cdr disco))))) 
 
 (defun uri-host-news(disco)
-  (write "news function")
-)
+  (write "news function"))
 
 (defun uri-host-tel(disco)
   (write "tel function")
@@ -115,9 +121,12 @@
   ;URI-PORT
 ;====================================================
 (defun uri-port(disco)
-  (cond((equal(coerce "http" 'list)(uri-scheme disco))
-      (print "80")))
+  (if(equal(coerce "http" 'list)(uri-scheme disco))
+      (write 80))
+  
+  
 )
+
 ;====================================================
   ;URI-PATH
 ;====================================================
@@ -141,7 +150,20 @@
   ;URI-DISPLAY
 ;====================================================
 (defun uri-display(disco)
-  
+  (princ "Scheme: ")(princ(uri-scheme disco))
+  (terpri)
+  (princ "Userinfo: ")(princ(uri-userinfo disco))
+  (terpri)
+  (princ "Host: ")(princ(uri-host disco))
+  (terpri)
+  (princ "Port: ")(princ(uri-port disco))
+  (terpri)
+  (princ "Path: ")(princ(uri-path disco))
+  (terpri)
+  (princ "Query: ")(princ(uri-query disco))
+  (terpri)
+  (princ "Fragment: ")(princ(uri-fragment disco))
+ 
 )
           
 

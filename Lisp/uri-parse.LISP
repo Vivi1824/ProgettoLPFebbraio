@@ -58,26 +58,19 @@
 )
 
 (defun uri-userinfo-mailto(disco)
-  
+  (cond((null disco)nil)
+       ((eql(car disco)#\:)(cdr disco)) 
+       (t(uri-userinfo-mailto(cdr disco)))) ;da finire
 )
-
-(defun uri-userinfo-tel(disco)
-
-)
-
-(defun uri-userinfo-fax(disco)
-
-)
-
-
+(defun uri-userinfo-tel(disco))
+(defun uri-userinfo-fax(disco))
 ;potrei prendere la lista e crearne una nuova con solo i caratteri che mi servono
-
 ;====================================================
   ;URI-HOST
 ;====================================================
 (defun uri-host(disco)
   (cond((equal(coerce "http" 'list)(uri-scheme disco))(uri-host-http disco))
-       (t(cond((equal(coerce "mailto" 'list)(uri-scheme disco))(uri-host-mailto disco))
+       (t(cond((equal(coerce "mailto" 'list)(uri-scheme disco))(uri-host-mailto disco))        
          (t(cond((equal(coerce "news" 'list)(uri-scheme disco))(uri-host-news disco))
             (t(cond((equal(coerce "tel" 'list)(uri-scheme disco))(uri-host-tel disco))
                (t(cond((equal(coerce "fax" 'list)(uri-scheme disco))(uri-host-fax disco))
@@ -90,12 +83,12 @@
 )
 
 (defun uri-host-mailto(disco)
-  
-) 
+  (cond((null disco)nil)
+       ((eql(car disco)#\@)(cdr disco))
+       (t(uri-host-mailto(cdr disco))))) 
 
 (defun uri-host-news(disco)
-  (write "news function")
-)
+  (write "news function"))
 
 (defun uri-host-tel(disco)
   (write "tel function")
