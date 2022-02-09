@@ -51,12 +51,26 @@
 ;===================================================
   ;URI-USERINFO
 ;===================================================
-(defun uri-userinfo(disco);senza la cancellazione  
-  (cond((null disco)nil)
-         ((if(or(not(eql(car disco)#\@)))
-         (cons(car disco)(uri-userinfo(cdr disco))))))
-    
+(defun uri-userinfo(disco);senza la cancellazione
+  (cond((equal(coerce "mailto" 'list)(uri-scheme disco))(uri-userinfo-mailto disco))
+       (t(cond((equal(coerce "tel" 'list)(uri-scheme disco))(uri-userinfo-tel disco))
+         (t(cond((equal(coerce "fax" 'list)(uri-scheme disco))(uri-userinfo-fax disco)))))))
 )
+
+(defun uri-userinfo-mailto(disco)
+  
+)
+
+(defun uri-userinfo-tel(disco)
+
+)
+
+(defun uri-userinfo-fax(disco)
+
+)
+
+
+;potrei prendere la lista e crearne una nuova con solo i caratteri che mi servono
 
 ;====================================================
   ;URI-HOST
@@ -76,7 +90,7 @@
 )
 
 (defun uri-host-mailto(disco)
- 
+  
 ) 
 
 (defun uri-host-news(disco)
@@ -114,9 +128,12 @@
   ;URI-PORT
 ;====================================================
 (defun uri-port(disco)
-  (cond((equal(coerce "http" 'list)(uri-scheme disco))
-      (print "80")))
+  (if(equal(coerce "http" 'list)(uri-scheme disco))
+      (write 80))
+  
+  
 )
+
 ;====================================================
   ;URI-PATH
 ;====================================================
@@ -139,7 +156,22 @@
 ;====================================================
   ;URI-DISPLAY
 ;====================================================
-(defun uri-display(disco))
+(defun uri-display(disco)
+  (princ "Scheme: ")(princ(uri-scheme disco))
+  (terpri)
+  (princ "Userinfo: ")(princ(uri-userinfo disco))
+  (terpri)
+  (princ "Host: ")(princ(uri-host disco))
+  (terpri)
+  (princ "Port: ")(princ(uri-port disco))
+  (terpri)
+  (princ "Path: ")(princ(uri-path disco))
+  (terpri)
+  (princ "Query: ")(princ(uri-query disco))
+  (terpri)
+  (princ "Fragment: ")(princ(uri-fragment disco))
+ 
+)
           
 
 

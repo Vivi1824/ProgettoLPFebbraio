@@ -51,25 +51,24 @@
 ;===================================================
   ;URI-USERINFO
 ;===================================================
-(defun uri-userinfo(disco);senza la cancellazione
-    (cond((null disco)nil)
-         ((if(or(not(eql(car disco)#\@)))
+(defun uri-userinfo(disco);senza la cancellazione  
+  (cond((null disco)nil
+       (t(uri-userinfo(car disco))))
+       ((if(or(not(eql(car disco)#\@)))
          (cons(car disco)(uri-userinfo(cdr disco))))))
+    
 )
 
 ;====================================================
   ;URI-HOST
 ;====================================================
 (defun uri-host(disco)
-  (cond((equal(coerce "http" 'list)(uri-scheme disco))
-      (uri-host-http disco)))
-
-  ;(cond((equal(coerce "mailto" 'list)(uri-scheme disco))(uri-host-mailto disco)))
-  ;(if(equal(coerce "news" 'list)(uri-scheme disco))(uri-host-news disco))
-  ;(if(equal(coerce "tel" 'list)(uri-scheme disco))(uri-host-tel disco))
-  ;(if(equal(coerce "fax" 'list)(uri-scheme disco))(uri-host-fax disco))
-  ;(if(equal(coerce "zos" 'list)(uri-scheme disco))(uri-host-zos disco))
-)
+  (cond((equal(coerce "http" 'list)(uri-scheme disco))(uri-host-http disco))
+       (t(cond((equal(coerce "mailto" 'list)(uri-scheme disco))(uri-host-mailto disco))
+         (t(cond((equal(coerce "news" 'list)(uri-scheme disco))(uri-host-news disco))
+            (t(cond((equal(coerce "tel" 'list)(uri-scheme disco))(uri-host-tel disco))
+               (t(cond((equal(coerce "fax" 'list)(uri-scheme disco))(uri-host-fax disco))
+                  (t(cond((equal(coerce "zos" 'list)(uri-scheme disco))(uri-host-zos disco))))))))))))))
 
 (defun uri-host-http(disco)
    ;Si deve ricavare la stringa presente dopo :// e prima dei :
@@ -78,7 +77,7 @@
 )
 
 (defun uri-host-mailto(disco)
-  (write "mailto function")
+ 
 ) 
 
 (defun uri-host-news(disco)
@@ -117,7 +116,7 @@
 ;====================================================
 (defun uri-port(disco)
   (cond((equal(coerce "http" 'list)(uri-scheme disco))
-      (write "80")))
+      (print "80")))
 )
 ;====================================================
   ;URI-PATH
@@ -141,7 +140,9 @@
 ;====================================================
   ;URI-DISPLAY
 ;====================================================
-(defun uri-display(disco))
+(defun uri-display(disco)
+  
+)
           
 
 
