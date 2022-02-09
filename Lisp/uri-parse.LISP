@@ -9,30 +9,38 @@
 
 ;======================================
 ;COSE DA FARE
-;1) capire come si fa la cancellazione degli elementi dalle liste 
-;   dopo aver fatto la cons
 ;2) creare tutti i controlli per la sintassi dei campi
 ;3) capire come assegnare i vari risultati delle funzioni alla defstruct
-;4) 
+;4)
 ;L'idea è che venga analizzato prima lo scheme e poi in base a quello che viene 
 ;riconosciuto allora si va ad analizzare il resto della stringa
 ;====================================== 
 
-(defstruct (uri(:constructor create-uri( 
-  (scheme :type string) 
-  (user_info :type string)
-  (host :type string)
-  (port :type int)
-  (path :type string)
-  (query :type string)
-  (fragment :type string)
-))))
+(defstruct uri 
+  scheme  
+  user_info
+  host
+  port
+  path
+  query
+  fragment
+)
+
+;(make-uri :scheme (uri-scheme uri-structure)
+ ;           :user_info (uri-userinfo uri-structure)
+ ;           :host (uri-host uri-structure)
+ ;           :port (uri-host uri-structure)
+ ;           :path (uri-host uri-structure)
+ ;           :query (uri-host uri-structure)
+ ;           :fragment (uri-host uri-structure)
+;)
 ;===================================================
   ;URI-PARSE
 ;===================================================  
 (defun uri-parse(uri-structure)
-  (let newlist(coerce uri-structure 'list))
-  ;(format nil "~{~a~}"(coerce uri-structure 'list)) 
+  ;(let newlist(coerce uri-structure 'list))
+  (format nil "~{~a~}"(coerce uri-structure 'list))
+  
   ;prende gli elementi della lista e li formatta come stringa
 )
 
@@ -78,9 +86,10 @@
 ;====================================================
 (defun uri-host(disco)
   (cond((equal(coerce "http" 'list)(uri-scheme disco))(uri-host-http disco))
-       (t(cond((equal(coerce "mailto" 'list)(uri-scheme disco))(uri-host-mailto disco))        
+       (t(cond((equal(coerce "mailto" 'list)(uri-scheme disco))(uri-host-mailto disco))   
          (t(cond((equal(coerce "news" 'list)(uri-scheme disco))(uri-host-news disco))
            (t(cond((equal(coerce "zos" 'list)(uri-scheme disco))(uri-host-zos disco))))))))))
+
 
 (defun uri-host-http(disco)
    ;Si deve ricavare la stringa presente dopo :// e prima dei :
