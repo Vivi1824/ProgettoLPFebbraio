@@ -62,8 +62,16 @@
        ((eql(car disco)#\:)(cdr disco)) 
        (t(uri-userinfo-mailto(cdr disco)))) ;da finire
 )
-(defun uri-userinfo-tel(disco))
-(defun uri-userinfo-fax(disco))
+(defun uri-userinfo-tel(disco)
+  (cond((null disco)nil)
+       ((eql(car disco)#\:)(cdr disco)) 
+       (t(uri-userinfo-tel(cdr disco))))
+)
+(defun uri-userinfo-fax(disco)
+  (cond((null disco)nil)
+       ((eql(car disco)#\:)(cdr disco)) 
+       (t(uri-userinfo-fax(cdr disco))))
+)
 ;potrei prendere la lista e crearne una nuova con solo i caratteri che mi servono
 ;====================================================
   ;URI-HOST
@@ -72,9 +80,7 @@
   (cond((equal(coerce "http" 'list)(uri-scheme disco))(uri-host-http disco))
        (t(cond((equal(coerce "mailto" 'list)(uri-scheme disco))(uri-host-mailto disco))        
          (t(cond((equal(coerce "news" 'list)(uri-scheme disco))(uri-host-news disco))
-            (t(cond((equal(coerce "tel" 'list)(uri-scheme disco))(uri-host-tel disco))
-               (t(cond((equal(coerce "fax" 'list)(uri-scheme disco))(uri-host-fax disco))
-                  (t(cond((equal(coerce "zos" 'list)(uri-scheme disco))(uri-host-zos disco))))))))))))))
+           (t(cond((equal(coerce "zos" 'list)(uri-scheme disco))(uri-host-zos disco))))))))))
 
 (defun uri-host-http(disco)
    ;Si deve ricavare la stringa presente dopo :// e prima dei :
@@ -88,15 +94,9 @@
        (t(uri-host-mailto(cdr disco))))) 
 
 (defun uri-host-news(disco)
-  (write "news function"))
-
-(defun uri-host-tel(disco)
-  (write "tel function")
-)
-
-(defun uri-host-fax(disco)
-  (write "fax function")
-)
+  (cond((null disco)nil)
+       ((eql(car disco)#\:)(cdr disco)) 
+       (t(uri-host-news(cdr disco)))))
 
 (defun uri-host-zos(disco)
   (write "zos function")
