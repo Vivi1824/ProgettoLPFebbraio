@@ -2,7 +2,7 @@
 ;STUDENTI DEL GRUPPO               
 ;======================================
 ;Giuliani Viviana 875068
-;Daniel Marco Gatti 869310
+;Gatti Daniel Marco 869310
 ;======================================
 ;PROGETTO APPELLO DEL 25 FEBBRAIO 2022
 ;======================================
@@ -11,11 +11,12 @@
 ;COSE DA FARE
 ;2) creare tutti i controlli per la sintassi dei campi
 ;3) capire come assegnare i vari risultati delle funzioni alla defstruct
-;4)
-;L'idea è che venga analizzato prima lo scheme e poi in base a quello che viene 
-;riconosciuto allora si va ad analizzare il resto della stringa
+;4) fare uri-parse
+;5) fare controllo indirizzo ip
+;6) mancano alcune implementazioni per http
 ;====================================== 
-
+  ;STRUCTURE
+;======================================
 (defstruct uri 
   scheme  
   user_info
@@ -26,25 +27,30 @@
   fragment
 )
 
-;(make-uri :scheme (uri-scheme uri-structure)
- ;           :user_info (uri-userinfo uri-structure)
- ;           :host (uri-host uri-structure)
- ;           :port (uri-host uri-structure)
- ;           :path (uri-host uri-structure)
- ;           :query (uri-host uri-structure)
- ;           :fragment (uri-host uri-structure)
-;)
+(defun construct(uri-structure)
+  (make-uri :scheme (uri-scheme uri-structure)
+          :user_info (uri-userinfo uri-structure)
+          :host (uri-host uri-structure)
+          :port (uri-port uri-structure)
+          :path (uri-path uri-structure)
+          :query (uri-query uri-structure)
+          :fragment (uri-fragment uri-structure)
+  )
+)
 ;===================================================
   ;URI-PARSE
 ;===================================================  
 (defun uri-parse(uri-structure)
-  ;(let newlist(coerce uri-structure 'list))
-  (format nil "~{~a~}"(coerce uri-structure 'list))
+  (coerce uri-structure 'list)
+  ;(uri-display (coerce uri-structure 'list))
+  ;(construct uri-structure)
+  
   
   ;prende gli elementi della lista e li formatta come stringa
 )
 
 ;map nil #'princ   questo serve per levare i # 
+;(format nil "~{~a~}"(coerce uri-structure 'list))
 ;===================================================
   ;URI-SCHEME
 ;===================================================
@@ -63,6 +69,10 @@
   (cond((equal(coerce "mailto" 'list)(uri-scheme disco))(uri-userinfo-mailto disco))
        (t(cond((equal(coerce "tel" 'list)(uri-scheme disco))(uri-userinfo-tel disco))
          (t(cond((equal(coerce "fax" 'list)(uri-scheme disco))(uri-userinfo-fax disco)))))))
+)
+
+(defun uri-userinfo-http(disco)
+  ;fare il controllo per gli indirizzi ip
 )
 
 (defun uri-userinfo-mailto(disco)
@@ -86,16 +96,14 @@
 ;====================================================
 (defun uri-host(disco)
   (cond((equal(coerce "http" 'list)(uri-scheme disco))(uri-host-http disco))
-       (t(cond((equal(coerce "mailto" 'list)(uri-scheme disco))(uri-host-mailto disco))   
+       (t(cond((equal(coerce "mailto" 'list)(uri-scheme disco))(uri-host-mailto disco)) 
          (t(cond((equal(coerce "news" 'list)(uri-scheme disco))(uri-host-news disco))
-           (t(cond((equal(coerce "zos" 'list)(uri-scheme disco))(uri-host-zos disco))))))))))
+           (t(cond((equal(coerce "zos" 'list)(uri-scheme disco))(uri-host-http disco))))))))))
 
 
 (defun uri-host-http(disco)
    ;Si deve ricavare la stringa presente dopo :// e prima dei :
-  (sub-list disco 7  nil)
-  
-)
+  (sub-list disco 7  nil))
 
 (defun uri-host-mailto(disco)
   (cond((null disco)nil)
@@ -106,10 +114,6 @@
   (cond((null disco)nil)
        ((eql(car disco)#\:)(cdr disco)) 
        (t(uri-host-news(cdr disco)))))
-
-(defun uri-host-zos(disco)
-  (write "zos function")
-)
 
 ;====================================================
   ;OTHER FUNCTIONS
@@ -126,26 +130,22 @@
          ((< 0 len)(cons(car lst)(sub-list(cdr lst)idx(1- len))))
     )
 )
+
 ;====================================================
   ;URI-PORT
 ;====================================================
 (defun uri-port(disco)
   (if(equal(coerce "http" 'list)(uri-scheme disco))
-      (write 80))
-  
-  
-)
-
+      (write 80)))
 ;====================================================
   ;URI-PATH
 ;====================================================
-(defun uri-path(disco)
+(defun uri-path-zos(disco)
   
 )
 ;====================================================
   ;URI-QUERY
 ;====================================================
-
 (defun uri-query(disco)
 
 )
@@ -153,7 +153,9 @@
   ;URI-FRAGMENT
 ;====================================================
 (defun uri-fragment(disco)
-  
+   ;(cond((null disco)nil)
+    ;   ((eql(car disco)#\#)(cdr disco))
+     ;  (t(uri-fragment(cdr disco))))
 )
 ;====================================================
   ;URI-DISPLAY
