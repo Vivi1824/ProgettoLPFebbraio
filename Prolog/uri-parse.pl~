@@ -1,28 +1,46 @@
 /*l'idea è di trasformare la stringa in una lista di caratteri e mettere gli altri caratteri in un'altra lista fin quando non incontrano un simbolo speciale*/
 uri_parse(URIString, URI) :- string_chars(URIString, ListOfChar),
     writeln(ListOfChar),
-    gestione_scheme(ListOfChar, Scheme),
-    writeln(Scheme),
+    not(gestione_scheme(ListOfChar, List, ListScheme)),
+    writeln(ListScheme),
     URI = uri(Scheme, Userinfo, Host, Port, Path, Query, Fragment).
-% la ricorsione deve terminare quando si incontra il :, mentre prima gli
-% elementi vanno aggiunti ad una lista e rimossi dalla lista corrente
-% quindi il caso base è quando la lista è vuota oppure quando si
-% incontra :.
-lungh_lista([], 0).
-lungh_lista([_ | Coda], L) :- lungh_lista(Coda, N), L is N+1.
-/*gestione_scheme([Testa | Coda], S) :- (Testa \= ":" -> (append([Testa], [Testa], S), gestione_scheme(Coda, S)) ;
-                                      (Testa == ":" -> write(":
-                                      trovato")); !).*/
-/*gestione_scheme([Testa | Coda], [Testa]) :- Testa \= ":"; !; append([Testa], [], S), gestione_scheme(Coda, S).*/
-/*gestione_scheme([Testa | Coda], S, Scheme) :- Testa \= ":", ! , write(S), append([Testa], S, S2), gestione_scheme(Coda, S2, _).*/
-confronta_stringhe(Stringa1, ":"):- Stringa1 \= ":", writeln("true stringa").
-lista_vuota([Testa | _]) :- Testa == "", writeln("true lista vuota").
-%aggiungere aggiungi elemento lista
-agg_elemento_lista(El, ListaInput , Lista) :- append([El], ListaInput, Lista).
-gestione_scheme([Testa | Coda], Lista) :- (not(confronta_stringhe(Testa, _)) ->
-                                               (lista_vuota(Lista) -> agg_elemento_lista(Testa, Lista, Ris);
-                                               agg_elemento_lista([Testa], Lista, Scheme),
-                                               gestione_scheme(Coda, Scheme));!).
+
+confronta_stringhe(Stringa1, ":"):- (Stringa1 \= ":" -> true ; !).
+lista_vuota(Lista) :- not(member(_, Lista)), writeln("controllo lista").
+/*remover(_, [], []).
+remover(R, [R | T], T).
+remover(R, [H | T], [H | T2]) :- H \= R, remover(R, T, T2).*/
+agg_elemento_lista(El, ListaInput , Lista) :- append([El], ListaInput, Lista), writeln("controllo aggiunta").
+crea_scheme([], _).
+crea_scheme([Testa | _], Scheme) :- string_concat(Testa, Scheme, Scheme).
+% gestione_scheme([Testa | Coda], [], Lista1) :-
+% (confronta_stringhe(Testa, ":") ->
+%agg_elemento_lista(Testa, [], Lista1),
+%writeln(Lista1),
+%gestione_scheme(Coda, Lista1, _); !).
+/*gestione_scheme([Testa | Coda], [], Lista1) :-  confronta_stringhe(Testa, ":"),
+    agg_elemento_lista(Testa, [], Lista1),
+    writeln(Lista1).*/
+rimozione([]).
+rimozione([_ | Coda]) :- rimozione(Coda).
+/*gestione_scheme([], [_], [_]).
+gestione_scheme([Testa | Coda], Lista1, Lista2) :-(confronta_stringhe(Testa, ":"),
+                                                  agg_elemento_lista(Testa, Lista1, Lista2),
+                                                   writeln(Lista2),
+                                                   gestione_scheme(Coda, Lista2, Lista3));
+                                                  gestione_scheme([], _,
+                                                  _).*/
+gestione_scheme([], [], [_]).
+gestione_scheme([":" | _], [_], [_]) :- gestione_scheme([], _, _).
+gestione_scheme([Testa | Coda], List1, List2) :- (not(member(_, List1)),!, Testa \= ":"->
+                                                  agg_elemento_lista(Testa, List1, List2),
+                                                  writeln(List2);
+                                                 writeln("ramo else"),
+                                                  rimozione(Coda)), gestione_scheme(Coda, List2, _).
+
+
+
+
 
 
 
