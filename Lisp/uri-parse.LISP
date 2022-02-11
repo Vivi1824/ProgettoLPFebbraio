@@ -14,6 +14,7 @@
 ;4) fare uri-parse
 ;5) fare controllo indirizzo ip
 ;6) mancano alcune implementazioni per http
+;7) C'è il problema che se non viene trovato un carattere non funzionano i conta: FIXARE
 ;====================================== 
   ;STRUCTURE
 ;======================================
@@ -126,22 +127,21 @@
 ;====================================================
   ;URI-PATH
 ;====================================================
-(defun uri-path-zos(disco))
+(defun uri-path-zos(disco));da fare
 
-(defun uri-path(disco))
+(defun uri-path(disco)); da fare
 ;====================================================
   ;URI-QUERY
 ;====================================================
+;(defun uri-query(disco)) ;da fare
 (defun uri-query(disco)
   (sub-list disco (+(conta-puntodomanda disco)1)(-(conta-hashtag disco)(+(conta-puntodomanda disco)1)))
 )
 ;====================================================
   ;URI-FRAGMENT
 ;====================================================
-(defun uri-fragment(disco)
-   ;(cond((null disco)nil)
-    ;   ((eql(car disco)#\#)(cdr disco))
-     ;  (t(uri-fragment(cdr disco))))
+(defun uri-fragment(disco);da sistemare
+   (sub-list disco (+(conta-hashtag disco)1) nil)
 )
 ;====================================================
   ;URI-DISPLAY
