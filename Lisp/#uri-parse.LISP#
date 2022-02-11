@@ -14,7 +14,8 @@
 ;4) fare uri-parse
 ;5) fare controllo indirizzo ip
 ;6) mancano alcune implementazioni per http
-;7) C'è il problema che se non viene trovato un carattere non funzionano i conta: FIXARE
+;7) C'Ã¨ il problema che se non viene trovato un carattere non funzionano i conta: FIXARE
+;8) Da fare ancora c'Ã¨ zos
 ;=======================================================================================
   ;STRUCTURE
 ;=======================================================================================
@@ -105,7 +106,7 @@
 ))))))))
 
 
-(defun uri-host-http(disco) ;capire che tipo di stringa può capitare
+(defun uri-host-http(disco) ;capire che tipo di stringa puÃ² capitare
   (sub-list disco (+(conta-chiocciola disco)1) nil)
 )
 
