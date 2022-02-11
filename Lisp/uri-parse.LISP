@@ -92,7 +92,7 @@
        ((eql(car disco)#\:)(cdr disco)) 
        (t(uri-userinfo-fax(cdr disco))))
 )
-;potrei prendere la lista e crearne una nuova con solo i caratteri che mi servono
+
 ;====================================================
   ;URI-HOST
 ;====================================================
@@ -103,8 +103,7 @@
            (t(cond((equal(coerce "zos" 'list)(uri-scheme disco))(uri-host-http disco))))))))))
 
 
-(defun uri-host-http(disco)
-   ;Si deve ricavare la stringa presente dopo :// e prima dei :
+(defun uri-host-http(disco) ;capire che tipo di stringa può capitare
   (sub-list disco (+(conta-chiocciola disco)1) nil)
 )
 
@@ -118,6 +117,51 @@
        ((eql(car disco)#\:)(cdr disco)) 
        (t(uri-host-news(cdr disco)))))
 
+;====================================================
+  ;URI-PORT
+;====================================================
+(defun uri-port(disco)
+  (if(equal(coerce "http" 'list)(uri-scheme disco))
+      (write 80)))
+;====================================================
+  ;URI-PATH
+;====================================================
+(defun uri-path-zos(disco))
+
+(defun uri-path(disco))
+;====================================================
+  ;URI-QUERY
+;====================================================
+(defun uri-query(disco)
+  (sub-list disco (+(conta-puntodomanda disco)1)(-(conta-hashtag disco)(+(conta-puntodomanda disco)1)))
+)
+;====================================================
+  ;URI-FRAGMENT
+;====================================================
+(defun uri-fragment(disco)
+   ;(cond((null disco)nil)
+    ;   ((eql(car disco)#\#)(cdr disco))
+     ;  (t(uri-fragment(cdr disco))))
+)
+;====================================================
+  ;URI-DISPLAY
+;====================================================
+(defun uri-display(disco)
+  (princ "Scheme: ")(princ(uri-scheme disco))
+  (terpri)
+  (princ "Userinfo: ")(princ(uri-userinfo disco))
+  (terpri)
+  (princ "Host: ")(princ(uri-host disco))
+  (terpri)
+  (princ "Port: ")(princ(uri-port disco))
+  (terpri)
+  (princ "Path: ")(princ(uri-path disco))
+  (terpri)
+  (princ "Query: ")(princ(uri-query disco))
+  (terpri)
+  (princ "Fragment: ")(princ(uri-fragment disco))
+ 
+)      
 ;====================================================
   ;OTHER FUNCTIONS
 ;===================================================
@@ -155,53 +199,18 @@
     )
 )
 
-;====================================================
-  ;URI-PORT
-;====================================================
-(defun uri-port(disco)
-  (if(equal(coerce "http" 'list)(uri-scheme disco))
-      (write 80)))
-;====================================================
-  ;URI-PATH
-;====================================================
-(defun uri-path-zos(disco)
-  
+(defun conta-puntodomanda(disco)
+  (cond((null disco)0)
+         ((not(eql(car disco)#\?))(+ 1(conta-puntodomanda(cdr disco))))
+         (t(conta-puntodomanda())) 
+  )   
 )
-;====================================================
-  ;URI-QUERY
-;====================================================
-(defun uri-query(disco)
 
+(defun conta-hashtag(disco)
+  (cond((null disco)0)
+       ((not(eql(car disco)#\#))(+ 1(conta-hashtag(cdr disco))))
+       (t(conta-hashtag())))
 )
-;====================================================
-  ;URI-FRAGMENT
-;====================================================
-(defun uri-fragment(disco)
-   ;(cond((null disco)nil)
-    ;   ((eql(car disco)#\#)(cdr disco))
-     ;  (t(uri-fragment(cdr disco))))
-)
-;====================================================
-  ;URI-DISPLAY
-;====================================================
-(defun uri-display(disco)
-  (princ "Scheme: ")(princ(uri-scheme disco))
-  (terpri)
-  (princ "Userinfo: ")(princ(uri-userinfo disco))
-  (terpri)
-  (princ "Host: ")(princ(uri-host disco))
-  (terpri)
-  (princ "Port: ")(princ(uri-port disco))
-  (terpri)
-  (princ "Path: ")(princ(uri-path disco))
-  (terpri)
-  (princ "Query: ")(princ(uri-query disco))
-  (terpri)
-  (princ "Fragment: ")(princ(uri-fragment disco))
- 
-)
-          
-
 
 
 ;(defun my-concat( list ) ;per concatenare
