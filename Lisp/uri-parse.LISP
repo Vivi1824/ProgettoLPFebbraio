@@ -105,7 +105,8 @@
 
 (defun uri-host-http(disco)
    ;Si deve ricavare la stringa presente dopo :// e prima dei :
-  (sub-list disco 7  nil))
+  (sub-list disco (+(conta-chiocciola disco)1) nil)
+)
 
 (defun uri-host-mailto(disco)
   (cond((null disco)nil)
@@ -146,7 +147,6 @@
          (t(conta-slash()))
     )
 )
-
 
 (defun conta-chiocciola(disco)
     (cond((null disco)0)
