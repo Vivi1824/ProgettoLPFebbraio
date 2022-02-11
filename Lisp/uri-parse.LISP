@@ -68,11 +68,25 @@
 (defun uri-userinfo(disco);senza la cancellazione
   (cond((equal(coerce "mailto" 'list)(uri-scheme disco))(uri-userinfo-mailto disco))
        (t(cond((equal(coerce "tel" 'list)(uri-scheme disco))(uri-userinfo-tel disco))
-         (t(cond((equal(coerce "fax" 'list)(uri-scheme disco))(uri-userinfo-fax disco)))))))
-)
+         (t(cond((equal(coerce "http" 'list)(uri-scheme disco))(uri-userinfo-http disco))
+           (t(cond((equal(coerce "fax" 'list)(uri-scheme disco))(uri-userinfo-fax disco)))))))
+)))
 
 (defun uri-userinfo-http(disco)
-  ;fare il controllo per gli indirizzi ip
+  (cond((null disco)nil)
+       ((if(eql(car disco)#\:)
+            ((if(not(eql(car disco)#\@))
+                (cons(car disco)(uri-userinfo-http (cdr disco)))))
+            (uri-userinfo-http(cdr disco))))
+  )
+)
+
+
+(defun conta-tra-segni(disco)
+  (cond((null disco)0)
+       ((not(eql(car disco)#\:))(+ 1(conta-tra-segni(cdr disco))))
+       (t(conta-tra-segni()))
+  )
 )
 
 (defun uri-userinfo-mailto(disco)
