@@ -73,21 +73,9 @@
 )))
 
 (defun uri-userinfo-http(disco)
-  (cond((null disco)nil)
-       ((if(eql(car disco)#\:)
-            ((if(not(eql(car disco)#\@))
-                (cons(car disco)(uri-userinfo-http (cdr disco)))))
-            (uri-userinfo-http(cdr disco))))
-  )
+  (sub-list disco (+ (conta-slash disco) 2)(-(conta-chiocciola disco)(+(conta-slash disco)2)))
 )
 
-
-(defun conta-tra-segni(disco)
-  (cond((null disco)0)
-       ((not(eql(car disco)#\:))(+ 1(conta-tra-segni(cdr disco))))
-       (t(conta-tra-segni()))
-  )
-)
 
 (defun uri-userinfo-mailto(disco)
   (cond((null disco)nil)
@@ -142,6 +130,28 @@
          ((< 0 idx)(sub-list(cdr lst)(1- idx)len))
          ((null len)lst)
          ((< 0 len)(cons(car lst)(sub-list(cdr lst)idx(1- len))))
+    )
+)
+
+(defun conta-duepunti(disco)
+    (cond((null disco)0)
+         ((not(eql(car disco)#\:))(+ 1(conta-duepunti(cdr disco))))
+         (t(conta-duepunti()))
+    )
+)
+
+(defun conta-slash(disco)
+    (cond((null disco)0)
+         ((not(eql(car disco)#\/))(+ 1(conta-slash(cdr disco))))
+         (t(conta-slash()))
+    )
+)
+
+
+(defun conta-chiocciola(disco)
+    (cond((null disco)0)
+         ((not(eql(car disco)#\@))(+ 1(conta-chiocciola(cdr disco))))
+         (t(conta-chiocciola()))
     )
 )
 
