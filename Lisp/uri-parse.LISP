@@ -66,7 +66,7 @@
 ;======================================================================================
   ;URI-USERINFO
 ;======================================================================================
-(defun uri-userinfo(disco);senza la cancellazione
+(defun uri-userinfo(disco)
   (cond((equal(coerce "mailto" 'list)(uri-scheme disco))(uri-userinfo-mailto disco))
        (t(cond((equal(coerce "tel" 'list)(uri-scheme disco))(uri-userinfo-tel disco))
          (t(cond((equal(coerce "http" 'list)(uri-scheme disco))(uri-userinfo-http disco))
@@ -77,12 +77,10 @@
   (sub-list disco (+ (conta-slash disco) 2)
                   (-(conta-chiocciola disco)(+(conta-slash disco)2)))
 )
-
-
 (defun uri-userinfo-mailto(disco)
   (cond((null disco)nil)
        ((eql(car disco)#\:)(cdr disco)) 
-       (t(uri-userinfo-mailto(cdr disco)))) ;da finire
+       (t(uri-userinfo-mailto(cdr disco))))
 )
 (defun uri-userinfo-tel(disco)
   (cond((null disco)nil)
@@ -128,7 +126,12 @@
 ;======================================================================================
   ;URI-PATH
 ;======================================================================================
-(defun uri-path-zos(disco));da fare
+(defun uri-path-zos(disco) ;manca controllo punto e carattere alfabetico
+  (if(and(<(conta-parentesi-aperta disco) 44)(<(-(conta-parentesi-chiusa disco)(conta-parentesi-aperta disco))8))
+  (sub-list disco (+ (conta-slash disco) 2)
+                  (-(conta-parentesi-chiusa disco)(+(conta-slash disco)2)))
+  (write "Path errato"))
+);da fare
 
 (defun uri-path(disco)); da fare
 ;======================================================================================
@@ -214,6 +217,17 @@
        (t(conta-hashtag())))
 )
 
+(defun conta-parentesi-aperta(disco)
+  (cond((null disco)0)
+       ((not(eql(car disco)#\( ))(+ 1(conta-parentesi-aperta(cdr disco))))
+       (t(conta-parentesi-aperta())))
+)
+
+(defun conta-parentesi-chiusa(disco)
+  (cond((null disco)0)
+       ((not(eql(car disco)#\) ))(+ 1(conta-parentesi-chiusa(cdr disco))))
+       (t(conta-parentesi-chiusa())))
+)
 
 ;(defun my-concat( list ) ;per concatenare
   ;(format nil "~{~a~}" list))
