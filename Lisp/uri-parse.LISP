@@ -27,7 +27,7 @@
 )
 
 (defun construct(uri-structure)
-  (make-uri :scheme (uri-scheme uri-structure)
+  (make-uri :scheme (uri-scheme (uri-structure))
           :user_info (uri-userinfo uri-structure)
           :host (uri-host uri-structure)
           :port (uri-port uri-structure)
@@ -36,14 +36,16 @@
           :fragment (uri-fragment uri-structure)
   )
 )
+
+(defun uri-structure(uri-structure)
+  (construct uri-structure)
+)
 ;=======================================================================================
   ;URI-PARSE
 ;=======================================================================================
 (defun uri-parse(uri-structure)
   (coerce uri-structure 'list)
- 
 )
-
 ;======================================================================================
   ;URI-SCHEME
 ;======================================================================================
@@ -165,7 +167,7 @@
   (princ "Query: ")(princ(uri-query disco))
   (terpri)
   (princ "Fragment: ")(princ(uri-fragment disco))
- 
+  (terpri)
 )      
 ;======================================================================================
   ;OTHER FUNCTIONS
