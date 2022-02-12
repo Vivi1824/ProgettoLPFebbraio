@@ -9,12 +9,10 @@
 
 ;=======================================================================================
 ;COSE DA FARE
-;2) creare tutti i controlli per la sintassi dei campi
-;3) capire come assegnare i vari risultati delle funzioni alla defstruct
-;4) fare uri-parse
-;5) fare controllo indirizzo ip
-;6) mancano alcune implementazioni per http
-;7) C'è il problema che se non viene trovato un carattere non funzionano i conta: FIXARE
+;1) creare controlli per indirizzo ip, il path zos con punto e carattere 
+;2) capire come assegnare i vari risultati delle funzioni alla defstruct
+;3) capire come poter suddividere bene il path e l'host
+;4) capire come viene fuori zos per gli altri campi
 ;=======================================================================================
   ;STRUCTURE
 ;=======================================================================================
@@ -43,15 +41,9 @@
 ;=======================================================================================
 (defun uri-parse(uri-structure)
   (coerce uri-structure 'list)
-  ;(uri-display (coerce uri-structure 'list))
-  ;(construct uri-structure)
-  
-  
-  ;prende gli elementi della lista e li formatta come stringa
+ 
 )
 
-;map nil #'princ   questo serve per levare i # 
-;(format nil "~{~a~}"(coerce uri-structure 'list))
 ;======================================================================================
   ;URI-SCHEME
 ;======================================================================================
@@ -74,24 +66,23 @@
 ))))))))
 
 (defun uri-userinfo-http(disco)
-  (sub-list disco (+ (conta-slash disco) 2)
-                  (-(conta-chiocciola disco)(+(conta-slash disco)2)))
-)
+  (if(not(eql(member #\@ disco)nil))
+                  (sub-list disco (+ (conta-slash disco) 2)
+                                  (-(conta-chiocciola disco)(+(conta-slash disco)2)))))
 (defun uri-userinfo-mailto(disco)
   (cond((null disco)nil)
        ((eql(car disco)#\:)(cdr disco)) 
-       (t(uri-userinfo-mailto(cdr disco))))
-)
+       (t(uri-userinfo-mailto(cdr disco)))))
+
 (defun uri-userinfo-tel(disco)
   (cond((null disco)nil)
        ((eql(car disco)#\:)(cdr disco)) 
-       (t(uri-userinfo-tel(cdr disco))))
-)
+       (t(uri-userinfo-tel(cdr disco)))))
+
 (defun uri-userinfo-fax(disco)
   (cond((null disco)nil)
        ((eql(car disco)#\:)(cdr disco)) 
-       (t(uri-userinfo-fax(cdr disco))))
-)
+       (t(uri-userinfo-fax(cdr disco)))))
 ;======================================================================================
   ;URI-HOST
 ;======================================================================================
@@ -102,9 +93,11 @@
            (t(cond((equal(coerce "zos" 'list)(uri-scheme disco))(uri-host-http disco))
 ))))))))
 
-
+;potrei risolvere il problema di scelta vedendo se sono minori di quelli iniziali
 (defun uri-host-http(disco) ;capire che tipo di stringa può capitare
-  (sub-list disco (+(conta-chiocciola disco)1) nil)
+  (if(not(eql(member #\@ disco)nil)) ;se non è nullo quindi c'è @
+      (sub-list disco (+ (conta-chiocciola disco) 1)nil)
+      (sub-list disco (+ (conta-slash disco) 2)nil)) 
 )
 
 (defun uri-host-mailto(disco)
@@ -116,7 +109,6 @@
   (cond((null disco)nil)
        ((eql(car disco)#\:)(cdr disco)) 
        (t(uri-host-news(cdr disco)))))
-
 ;======================================================================================
   ;URI-PORT
 ;======================================================================================
@@ -126,26 +118,34 @@
 ;======================================================================================
   ;URI-PATH
 ;======================================================================================
+(defun uri-path(disco)
+  (cond((equal(coerce "http" 'list)(uri-scheme disco))(uri-path-http disco))
+           (t(cond((equal(coerce "zos" 'list)(uri-scheme disco))(uri-path-zos disco))
+))))
+
+(defun uri-path-http(disco)
+  (sub-list disco (+ (conta-slash disco) 2)
+                  (-(conta-puntodomanda disco)(+(conta-slash disco)2))))
+
 (defun uri-path-zos(disco) ;manca controllo punto e carattere alfabetico
   (if(and(<(conta-parentesi-aperta disco) 44)(<(-(conta-parentesi-chiusa disco)(conta-parentesi-aperta disco))8))
   (sub-list disco (+ (conta-slash disco) 2)
                   (-(conta-parentesi-chiusa disco)(+(conta-slash disco)2)))
-  (write "Path errato"))
-);da fare
-
-(defun uri-path(disco)); da fare
+  (write "Path errato")))
 ;======================================================================================
   ;URI-QUERY
 ;======================================================================================
-;(defun uri-query(disco)) ;da fare
 (defun uri-query(disco)
+   (cond((equal(coerce "http" 'list)(uri-scheme disco))(uri-query-http disco))))
+
+(defun uri-query-http(disco)
   (sub-list disco (+(conta-puntodomanda disco)1)
                   (-(conta-hashtag disco)(+(conta-puntodomanda disco)1)))
 )
 ;======================================================================================
   ;URI-FRAGMENT
 ;======================================================================================
-(defun uri-fragment(disco);da sistemare
+(defun uri-fragment(disco)
    (sub-list disco (+(conta-hashtag disco)1) nil)
 )
 ;======================================================================================
@@ -174,6 +174,7 @@
   (cond ((null disco)0)
         ((numberp (car disco))(+ 1 (conta (cdr disco))))
         (t (conta (cdr disco)))))
+
 
 (defun sub-list(lst idx len)
     (cond((null lst)nil)
@@ -229,5 +230,3 @@
        (t(conta-parentesi-chiusa())))
 )
 
-;(defun my-concat( list ) ;per concatenare
-  ;(format nil "~{~a~}" list))
