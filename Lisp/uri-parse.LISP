@@ -9,9 +9,8 @@
 
 ;=======================================================================================
 ;COSE DA FARE
-;1) creare controlli per indirizzo ip, il path zos con punto e carattere 
-;2) capire come assegnare i vari risultati delle funzioni alla defstruct
-;3) capire come poter suddividere bene il path e l'host
+;1) creare controlli per indirizzo ip, il path zos con punto e carattere           
+;3)capire come poter suddividere bene il path e l'host
 ;4) capire come viene fuori zos per gli altri campi
 ;=======================================================================================
   ;STRUCTURE
@@ -75,7 +74,8 @@
        (t(cond((equal(coerce "tel" 'list)(uri-scheme-def disco))(uri-userinfo-tel disco))
          (t(cond((equal(coerce "http" 'list)(uri-scheme-def disco))(uri-userinfo-http disco))
            (t(cond((equal(coerce "fax" 'list)(uri-scheme-def disco))(uri-userinfo-fax disco))
-))))))))
+              (t(cond((equal(coerce "zos" 'list)(uri-scheme-def disco))(uri-userinfo-http disco))
+))))))))))
 
 (defun uri-userinfo-http(disco)
   (if(not(eql(member #\@ disco)nil))
@@ -165,7 +165,10 @@
 )
 
 (defun uri-query-def(disco)
-   (cond((equal(coerce "http" 'list)(uri-scheme-def disco))(uri-query-http disco))))
+   (cond((equal(coerce "http" 'list)(uri-scheme-def disco))(uri-query-http disco))
+        (t(cond((equal(coerce "zos" 'list)(uri-scheme-def disco))(uri-query-http disco))
+))))
+
 
 (defun uri-query-http(disco)
   (sub-list disco (+(conta-puntodomanda disco)1)
