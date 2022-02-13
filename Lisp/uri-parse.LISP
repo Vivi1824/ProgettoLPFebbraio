@@ -11,7 +11,6 @@
 ;COSE DA FARE
 ;1) creare controlli per indirizzo ip, il path zos con punto e carattere           
 ;3)capire come poter suddividere bene il path e l'host
-;4) capire come viene fuori zos per gli altri campi
 ;=======================================================================================
   ;STRUCTURE
 ;=======================================================================================
@@ -74,8 +73,7 @@
        (t(cond((equal(coerce "tel" 'list)(uri-scheme-def disco))(uri-userinfo-tel disco))
          (t(cond((equal(coerce "http" 'list)(uri-scheme-def disco))(uri-userinfo-http disco))
            (t(cond((equal(coerce "fax" 'list)(uri-scheme-def disco))(uri-userinfo-fax disco))
-              (t(cond((equal(coerce "zos" 'list)(uri-scheme-def disco))(uri-userinfo-http disco))
-))))))))))
+              (t(cond((equal(coerce "zos" 'list)(uri-scheme-def disco))(uri-userinfo-http disco))))))))))))
 
 (defun uri-userinfo-http(disco)
   (if(not(eql(member #\@ disco)nil))
@@ -152,10 +150,16 @@
                   (-(conta-puntodomanda disco)(+(conta-slash disco)2))))
 
 (defun uri-path-zos(disco) ;manca controllo punto e carattere alfabetico
-  (if(and(<(conta-parentesi-aperta disco) 44)(<(-(conta-parentesi-chiusa disco)(conta-parentesi-aperta disco))8))
+  (if(and(<(conta-parentesi-aperta disco) 44)
+         (<(-(conta-parentesi-chiusa disco)(conta-parentesi-aperta disco))8))
   (sub-list disco (+ (conta-slash disco) 2)
                   (-(conta-parentesi-chiusa disco)(+(conta-slash disco)2)))
   (write "Path errato")))
+
+;idea per il controllo potrebbe essere di verificare se presente il punto
+(defun dot-control(disco)
+  
+)
 ;======================================================================================
   ;URI-QUERY
 ;======================================================================================
