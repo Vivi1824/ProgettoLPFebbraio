@@ -9,7 +9,7 @@
 
 ;=======================================================================================
 ;COSE DA FARE
-;1) creare controlli per indirizzo ip, il path zos con punto e carattere           
+;1) creare controlli per indirizzo ip           
 ;3)capire come poter suddividere bene il path e l'host
 ;=======================================================================================
   ;STRUCTURE
@@ -76,6 +76,7 @@
               (t(cond((equal(coerce "zos" 'list)(uri-scheme-def uri-structure))(uri-userinfo-http uri-structure))
 ))))))))))
 
+
 (defun uri-userinfo-http(uri-structure)
   (if(not(eql(member #\@ uri-structure)nil))
                   (sub-list uri-structure (+ (conta-slash uri-structure) 2)
@@ -97,6 +98,10 @@
 ;======================================================================================
   ;URI-HOST
 ;======================================================================================
+(defun prova(uri-structure) ;funzione di prova
+  (if(and(eql(nth(conta-slash uri-structure)uri-structure)#\/) 
+         (eql(nth(+(conta-slash uri-structure)1)uri-structure)#\/))))
+
 (defun uri-host(uri-structure)
   (if(not(eql(uri-host-def uri-structure)nil))
      (format nil "~{~a~}" (uri-host-def uri-structure)))

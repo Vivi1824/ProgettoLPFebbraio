@@ -9,7 +9,7 @@
 
 ;=======================================================================================
 ;COSE DA FARE
-;1) creare controlli per indirizzo ip, il path zos con punto e carattere           
+;1) creare controlli per indirizzo ip           
 ;3)capire come poter suddividere bene il path e l'host
 ;=======================================================================================
   ;STRUCTURE
@@ -75,6 +75,10 @@
            (t(cond((equal(coerce "fax" 'list)(uri-scheme-def uri-structure))(uri-userinfo-fax uri-structure))
               (t(cond((equal(coerce "zos" 'list)(uri-scheme-def uri-structure))(uri-userinfo-http uri-structure))
 ))))))))))
+(defun prova (uri-structure)
+  (if(and(eql(nth(conta-slash uri-structure)uri-structure)#\/) 
+                                                                                                               
+)  
 
 (defun uri-userinfo-http(uri-structure)
   (if(not(eql(member #\@ uri-structure)nil))
@@ -135,7 +139,7 @@
       (format nil "~d" 80))              
 )
 ;======================================================================================
-  ;URI-PATH
+  ;URI-PATH      
 ;======================================================================================
 (defun uri-path(uri-structure)
   (if(not(eql(uri-path-def uri-structure)nil))
@@ -150,16 +154,32 @@
   (sub-list uri-structure (+ (conta-slash uri-structure) 2)
                   (-(conta-puntodomanda uri-structure)(+(conta-slash uri-structure)2))))
 
-(defun uri-path-zos(uri-structure) ;manca controllo punto e carattere alfabetico
+(defun uri-path-zos(uri-structure) ;manca controllo carattere alfabetico id44
+  (dot-control uri-structure)
+  (char-control uri-structure)
   (if(and(<(conta-parentesi-aperta uri-structure) 44)
          (<(-(conta-parentesi-chiusa uri-structure)(conta-parentesi-aperta uri-structure))8))
-  (sub-list uri-structure (+ (conta-slash uri-structure) 2)
-                  (-(conta-parentesi-chiusa uri-structure)(+(conta-slash uri-structure)2)))
-  (write "Path errato")))
+  (sub-list uri-structure (+ (conta-slash uri-structure) 1)
+                  (-(conta-parentesi-chiusa uri-structure)(conta-slash uri-structure)))
+  (write "Path errato"))
+)
 
-;idea per il controllo potrebbe essere di verificare se presente il punto
 (defun dot-control(uri-structure)
-  
+   (if(eql(nth(-(conta-parentesi-aperta uri-structure)1) uri-structure)#\.)
+      (break "Path errato, c'è un punto alla fine di Id44"))
+)
+(defun char-control(uri-structure)
+  (if(or(eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\0)
+        (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\1)
+        (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\2)
+        (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\3)
+        (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\4)
+        (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\5)
+        (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\6)
+        (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\7)
+        (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\8)
+        (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\9))
+      (break "Non va bene inizio path"))
 )
 ;======================================================================================
   ;URI-QUERY
