@@ -75,10 +75,7 @@
            (t(cond((equal(coerce "fax" 'list)(uri-scheme-def uri-structure))(uri-userinfo-fax uri-structure))
               (t(cond((equal(coerce "zos" 'list)(uri-scheme-def uri-structure))(uri-userinfo-http uri-structure))
 ))))))))))
-(defun prova (uri-structure)
-  (if(and(eql(nth(conta-slash uri-structure)uri-structure)#\/) 
-                                                                                                               
-)  
+
 
 (defun uri-userinfo-http(uri-structure)
   (if(not(eql(member #\@ uri-structure)nil))
@@ -101,6 +98,10 @@
 ;======================================================================================
   ;URI-HOST
 ;======================================================================================
+(defun prova(uri-structure) ;funzione di prova
+  (if(and(eql(nth(conta-slash uri-structure)uri-structure)#\/) 
+         (eql(nth(+(conta-slash uri-structure)1)uri-structure)#\/))))
+
 (defun uri-host(uri-structure)
   (if(not(eql(uri-host-def uri-structure)nil))
      (format nil "~{~a~}" (uri-host-def uri-structure)))
