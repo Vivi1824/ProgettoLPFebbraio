@@ -150,8 +150,9 @@
   (sub-list uri-structure (+ (conta-slash uri-structure) 2)
                   (-(conta-puntodomanda uri-structure)(+(conta-slash uri-structure)2))))
 
-(defun uri-path-zos(uri-structure) ;manca controllo punto e carattere alfabetico
+(defun uri-path-zos(uri-structure) ;manca controllo carattere alfabetico id44
   (dot-control uri-structure)
+  (char-control uri-structure)
   (if(and(<(conta-parentesi-aperta uri-structure) 44)
          (<(-(conta-parentesi-chiusa uri-structure)(conta-parentesi-aperta uri-structure))8))
   (sub-list uri-structure (+ (conta-slash uri-structure) 1)
@@ -162,6 +163,19 @@
 (defun dot-control(uri-structure)
    (if(eql(nth(-(conta-parentesi-aperta uri-structure)1) uri-structure)#\.)
       (break "Path errato, c'è un punto alla fine di Id44"))
+)
+(defun char-control(uri-structure)
+  (if(or(eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\0)
+        (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\1)
+        (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\2)
+        (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\3)
+        (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\4)
+        (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\5)
+        (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\6)
+        (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\7)
+        (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\8)
+        (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\9))
+      (break "Non va bene inizio path"))
 )
 ;======================================================================================
   ;URI-QUERY
