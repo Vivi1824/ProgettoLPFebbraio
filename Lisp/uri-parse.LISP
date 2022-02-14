@@ -135,7 +135,7 @@
       (format nil "~d" 80))              
 )
 ;======================================================================================
-  ;URI-PATH
+  ;URI-PATH      
 ;======================================================================================
 (defun uri-path(uri-structure)
   (if(not(eql(uri-path-def uri-structure)nil))
@@ -151,15 +151,17 @@
                   (-(conta-puntodomanda uri-structure)(+(conta-slash uri-structure)2))))
 
 (defun uri-path-zos(uri-structure) ;manca controllo punto e carattere alfabetico
+  (dot-control uri-structure)
   (if(and(<(conta-parentesi-aperta uri-structure) 44)
          (<(-(conta-parentesi-chiusa uri-structure)(conta-parentesi-aperta uri-structure))8))
-  (sub-list uri-structure (+ (conta-slash uri-structure) 2)
-                  (-(conta-parentesi-chiusa uri-structure)(+(conta-slash uri-structure)2)))
-  (write "Path errato")))
+  (sub-list uri-structure (+ (conta-slash uri-structure) 1)
+                  (-(conta-parentesi-chiusa uri-structure)(conta-slash uri-structure)))
+  (write "Path errato"))
+)
 
-;idea per il controllo potrebbe essere di verificare se presente il punto
 (defun dot-control(uri-structure)
-  
+   (if(eql(nth(-(conta-parentesi-aperta uri-structure)1) uri-structure)#\.)
+      (break "Path errato, c'è un punto alla fine di Id44"))
 )
 ;======================================================================================
   ;URI-QUERY
