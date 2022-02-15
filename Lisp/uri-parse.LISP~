@@ -11,6 +11,11 @@
 ;COSE DA FARE
 ;1) creare controlli per indirizzo ip           
 ;3)capire come poter suddividere bene il path e l'host
+
+;CASISTICHE DA CONTROLLARE
+;1) accettazione scheme e basta
+;2) accettazione scheme e host
+;3) non deve accettare userinfo senza host
 ;=======================================================================================
   ;STRUCTURE
 ;=======================================================================================
@@ -63,6 +68,7 @@
 ;======================================================================================
   ;URI-USERINFO
 ;======================================================================================
+;userinfo deve essere senza /,?,#,@,:
 (defun uri-userinfo(uri-structure)
   (if(not(eql(uri-userinfo-def uri-structure)nil))
   (format nil "~{~a~}" (uri-userinfo-def uri-structure)))
@@ -98,6 +104,7 @@
 ;======================================================================================
   ;URI-HOST
 ;======================================================================================
+;host deve essere senza . / ? # @ :
 (defun prova(uri-structure) ;funzione di prova
   (if(and(eql(nth(conta-slash uri-structure)uri-structure)#\/) 
          (eql(nth(+(conta-slash uri-structure)1)uri-structure)#\/))))
@@ -132,6 +139,7 @@
 ;======================================================================================
   ;URI-PORT
 ;======================================================================================
+; port deve avere solo numeri da 0 a 9
 (defun uri-port(uri-structure)
    (uri-port-def uri-structure) 
 )
@@ -142,6 +150,7 @@
 ;======================================================================================
   ;URI-PATH      
 ;======================================================================================
+; path deve essere senza /,?,#,@,: poi /nel mezzo di nuovo l'identificatore e poi / (questo pezzo è facoltativo
 (defun uri-path(uri-structure)
   (if(not(eql(uri-path-def uri-structure)nil))
       (format nil "~{~a~}" (uri-path-def uri-structure)))
@@ -185,6 +194,7 @@
 ;======================================================================================
   ;URI-QUERY
 ;======================================================================================
+;query deve avere caratteri qualsiasi ma senza #
 (defun uri-query(uri-structure)
   (if(not(eql(uri-query-def uri-structure)nil))
   (format nil "~{~a~}" (uri-query-def uri-structure)))
