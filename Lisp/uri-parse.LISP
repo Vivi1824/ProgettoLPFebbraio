@@ -119,9 +119,8 @@
 ;potrei risolvere il problema creando una sotto lista fino al / e poi ricavo da quella sotto lista da @
 (defun uri-host-http(uri-structure) ;capire che tipo di stringa può capitare
   (if(not(eql(member #\@ uri-structure)nil)) ;se non è nullo quindi c'è @
-      (
-        
-       )(write "Non è presente l'host")) 
+      (sub-list uri-structure (+ (conta-chiocciola uri-structure) 1)
+                              (-(conta-puntodomanda uri-structure)(+(conta-chiocciola uri-structure)1))))
 )
 
 (defun prova(uri-structure) ;funzione di prova
@@ -132,7 +131,8 @@
 )
        
 (defun funzione(listasmezz)
-  
+;(sub-list listasmezz (conta-slash listasmezz) nil)
+  (reverse listasmezz)
 )
 
 (defun uri-host-mailto(uri-structure)
@@ -277,6 +277,17 @@
          (t(conta-slash()))
     )
 )
+;conto finchè non diventano 3 slash
+(defun conta-slash-path(uri-structure)
+  ; (cond((null uri-structure)nil)
+   ;     ((eql(car uri-structure)#\/)((conta-slash-path uri-structure)countS))
+    ;    (t((conta-slash-path uri-structure)))
+   
+)
+
+(defun countP()(+ 0 1))
+
+(defun countS()(+ 0 1))
 
 (defun conta-chiocciola(uri-structure)
     (cond((null uri-structure)0)

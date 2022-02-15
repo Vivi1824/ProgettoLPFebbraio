@@ -105,13 +105,9 @@
   ;URI-HOST
 ;======================================================================================
 ;host deve essere senza . / ? # @ :
-(defun prova(uri-structure) ;funzione di prova
-  (if(and(eql(nth(conta-slash uri-structure)uri-structure)#\/) 
-         (eql(nth(+(conta-slash uri-structure)1)uri-structure)#\/))))
-
 (defun uri-host(uri-structure)
-  (if(not(eql(uri-host-def uri-structure)nil))
-     (format nil "~{~a~}" (uri-host-def uri-structure)))
+   (if(not(eql(uri-host-def uri-structure)nil))
+       (format nil "~{~a~}" (uri-host-def uri-structure)))     
 )
 (defun uri-host-def(uri-structure)
   (cond((equal(coerce "http" 'list)(uri-scheme-def uri-structure))(uri-host-http uri-structure))
@@ -120,11 +116,22 @@
            (t(cond((equal(coerce "zos" 'list)(uri-scheme-def uri-structure))(uri-host-http uri-structure))
 ))))))))
 
-;potrei risolvere il problema di scelta vedendo se sono minori di quelli iniziali
+;potrei risolvere il problema creando una sotto lista fino al / e poi ricavo da quella sotto lista da @
 (defun uri-host-http(uri-structure) ;capire che tipo di stringa può capitare
   (if(not(eql(member #\@ uri-structure)nil)) ;se non è nullo quindi c'è @
-      (sub-list uri-structure (+ (conta-chiocciola uri-structure) 1)nil)
-      (sub-list uri-structure (+ (conta-slash uri-structure) 2)nil)) 
+      (sub-list (conta-chiocciola uri-structure) nil)) 
+)
+
+(defun prova(uri-structure) ;funzione di prova
+;(if(and(eql(car uri-structure)#\/)(not(eql(car(cdr uri-structure)#\/))))
+  (cond((null uri-structure)nil)
+       ((eql(car uri-structure)#\@)(cdr uri-structure))
+       (t(prova(cdr uri-structure))))
+)
+       
+(defun funzione(listasmezz)
+;(sub-list listasmezz (conta-slash listasmezz) nil)
+  (reverse listasmezz)
 )
 
 (defun uri-host-mailto(uri-structure)

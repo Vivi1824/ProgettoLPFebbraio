@@ -1,6 +1,7 @@
 /*l'idea è di trasformare la stringa in una lista di caratteri e mettere gli altri caratteri in un'altra lista fin quando non incontrano un simbolo speciale*/
 % AGGIUNGERE CONTROLLO SOLO SCHEME PRESENTE, POI GESTIRE IL FATTO CHE
 % USERINFO DEVE ESSERCI PER FORZA SE C'è L'HOST E TUTTI GLI ALTRI CASI
+% VERIFICARE CHE CI SIANO TUTTI I CASI BASE
 uri_parse(URIString, URI) :- string_chars(URIString, ListOfChar),
     gestione_scheme(ListOfChar, ListScheme).
 %GESTIONE DELLO SCHEME E LA SUA CREAZIONE
@@ -29,7 +30,9 @@ confronta_scheme(Scheme, ListScheme) :- (Scheme == "http" ->
                                         scheme_tel_fax(Scheme, ListScheme, _) ;
                                         (   Scheme == "fax" ->
                                         scheme_tel_fax(Scheme, ListScheme, _);
-                                        !)))))).
+                                        (   Scheme == "zos" ->
+                                        scheme_zos(Scheme, ListScheme, _);
+                                        !))))))).
 %AGGIUNGERE IL CONTROLLO MEMBER PER VEDERE SE E' PRESENTE @
 scheme_http(_, [], []).
 scheme_http(Scheme, [Testa, Testa1 | Coda], ListInfo) :- (member('@', [Testa , Testa1 | Coda]) ->
@@ -47,15 +50,15 @@ crea_user_info([], ListUserInfo, Scheme, []) :- host(Scheme, [], ListUserInfo, _
 crea_user_info([Testa | Coda], ListUserInfo,Scheme, UserInfo) :- atomics_to_string([Testa | Coda], UserInfo),
     writeln(UserInfo),
     host(Scheme, UserInfo, ListUserInfo, _).
-%GESTIONE DELL'HOST, INTRODURRE IL CASO DEL : NON PRESENTE
+% GESTIONE DELL'HOST, INTRODURRE IL CASO DEL : NON PRESENTE, PROBLEMA DI
+% AGGIUNTA DI / SE NON PRESENTE USERINFO
 riempi_lista_host(Scheme, UserInfo,[Testa | Coda], List, [Testa | List] ) :- host(Scheme, UserInfo, Coda, [Testa | List]).
 host(Scheme, UserInfo, [Testa | Coda], []) :- riempi_lista_host(Scheme, UserInfo,[Testa | Coda],[], ListHost), !.
-host(Scheme, UserInfo, [Testa | Coda], ListHost) :- (member(Testa \= ':' ->
+host(Scheme, UserInfo, [Testa | Coda], ListHost) :- (Testa \= ':' ->
                                                     append([Testa], ListHost, List),
                                                      host(Scheme, UserInfo, Coda, List);
                                                     reverse(ListHost, ListInv),
-                                                    crea_host(ListInv, Coda, Scheme, UserInfo, _), !);
-                                                    crea_host([], Coda, Scheme, UserInfo, _).
+                                                    crea_host(ListInv, Coda, Scheme, UserInfo, _), !).
 crea_host([Testa | Coda], ListHost, Scheme, UserInfo, Host) :- atomics_to_string([Testa | Coda], Host),
     writeln(Host),
     porta(Scheme, UserInfo, Host, ListHost, _).
@@ -137,7 +140,82 @@ scheme_news(Scheme, [Testa | Coda], Host) :- atomics_to_string([Testa | Coda], H
 %TEL E FAX
 scheme_tel_fax(_, [], _).
 scheme_tel_fax(Scheme, [Testa | Coda], UserInfo) :- atomics_to_string([Testa | Coda], UserInfo),
-    uri_display([Scheme, UserInfo, [], [], [], [], []]).
+    uri_display([Scheme, UserInfo, [], [], [], [], []], URI).
+
+%ZOS
+scheme_zos(_, [], []).
+scheme_zos(Scheme, [Testa, Testa1 | Coda], ListUserInfo) :- (Testa == '/' ->
+                                                            (   Testa1 == '/' ->
+                                                            scheme_zos(Scheme, Coda, ListUserInfo);
+                                                            !) ;
+                                                            (   Testa \= '@' ->
+                                                            append([Testa], ListUserInfo, List),
+                                                            scheme_zos(Scheme, [Testa1 | Coda], List);
+                                                            reverse(ListUserInfo, ListInv),
+                                                                crea_user_info_z(ListInv, [Testa1 | Coda], Scheme, _),
+                                                                !)).
+crea_user_info_z([], ListUserInfo, Scheme, []) :- host(Scheme, [], ListUserInfo, _).
+crea_user_info_z([Testa | Coda], ListUserInfo, Scheme, UserInfo) :- atomics_to_string([Testa | Coda], UserInfo),
+    writeln(UserInfo),
+    host_z(Scheme, UserInfo, ListUserInfo, _).
+riempi_lista_host_z(Scheme, UserInfo, [Testa | Coda], List, [Testa | List]) :- host_z(Scheme, UserInfo, Coda, [Testa | List]).
+host_z(_, _, [], []).
+host_z(Scheme, UserInfo, [Testa | Coda], []) :- riempi_lista_host_z(Scheme, UserInfo, [Testa | Coda], [], ListHost), !.
+host_z(Scheme, UserInfo, [Testa | Coda], ListHost) :- (Testa \= ':' ->
+                                                      append([Testa], ListHost, List),
+                                                       host_z(Scheme, UserInfo, Coda, List);
+                                                      reverse(ListHost, ListInv),
+                                                       crea_host_z(ListInv, Coda, Scheme, UserInfo, _), !).
+crea_host_z([Testa | Coda], ListHost, Scheme, UserInfo, Host) :- atomics_to_string([Testa | Coda], Host),
+    writeln(Host),
+    porta_z(Scheme, UserInfo, Host, ListHost, _).
+riempi_lista_porta_z(Scheme, UserInfo, Host, [Testa | Coda], List, [Testa | List]) :- porta_z(Scheme, UserInfo, Host, Coda, [Testa | List]).
+porta_z(_, _, _, [], []).
+porta_z(Scheme, UserInfo, Host, [Testa | Coda], []) :- riempi_lista_porta_z(Scheme, UserInfo, Host, [Testa | Coda], [], ListPort).
+porta_z(Scheme, UserInfo, Host, [Testa | Coda], ListPort) :- (Testa \= '/' ->
+                                                             append([Testa], ListPort, List),
+                                                              porta_z(Scheme, UserInfo, Host, Coda, List);
+                                                             reverse(ListPort, ListInv),
+                                                              crea_porta_z(ListInv, Coda, Scheme, UserInfo, Host, _)).
+crea_porta_z([Testa | Coda], ListPort, Scheme, UserInfo, Host, Porta) :- atomics_to_string([Testa | Coda], Porta),
+    writeln(Porta),
+    path_z_id44(Scheme, UserInfo, Host, ListPort, Porta, _, _).
+riempi_lista_path_z(Scheme, UserInfo, Host, Porta, Cont, [Testa | Coda], Lista, [Testa | Lista]) :- Cont is 0,
+    path_z_id44(Scheme, UserInfo, Host, Coda, Porta, [Testa | Lista], Cont).
+
+% AGGIUNGERE UN CONTROLLO SU id44 e id8 per vedere se iniziano con un
+% carattere alfanumerico
+path_z_id44(_, _, _, [], _, _, _).
+path_z_id44(Scheme, UserInfo, Host, [Testa | Coda], Porta, [], Cont) :-
+    riempi_lista_path_z(Scheme, UserInfo, Host, Porta, Cont, [Testa | Coda], [], ListPath).
+path_z_id44(Scheme, UserInfo, Host, [Testa, Testa1 | Coda], Porta, ListPath, Cont) :- (Testa \= '?' ->
+                                                                         (   ((Testa == '.', Testa1 \= '(');
+                                                                         (Testa \= '.', Testa1 \= '('))  ->
+                                                                         (   Cont < 44 ->
+                                                                         append([Testa], ListPath, List),
+                                                                         path_z_id44(Scheme, UserInfo, Host, Coda, Porta, List, Cont1),
+                                                                             Cont1 is Cont+1;
+                                                                         (   Cont == 44 ->
+                                                                         append([Testa], ListPath, List),
+                                                                         path_z_id44(Scheme, UserInfo, Host, Coda, Porta, List, Cont);
+                                                                         !);! );
+                                                                         (   Testa == '(' ->
+                                                                         append([Testa], ListPath, List),
+                                                                         path_z_id8(Scheme, UserInfo, Host, [Testa1 | Coda], Porta, List, _)))).
+path_z_id8(Scheme, UserInfo, Host, [Testa | Coda], Porta, ListPort, Cont) :- (Testa \= ')' ->
+                                                                             (   Cont < 8 ->
+                                                                             Cont is Cont+1,
+                                                                             append([Testa], ListPort, List),
+                                                                             path_z_id8(Scheme, UserInfo, Host, [Testa | Coda], Porta, List, Cont);
+                                                                             !);
+                                                                             append([Testa], ListPort, List),
+                                                                             reverse(List, ListInv),
+                                                                             crea_path_z(ListInv, Coda, Scheme, UserInfo, Host, Porta, _),
+                                                                                        !).
+crea_path_z([Testa | Coda], ListPath, Scheme, UserInfo, Host, Porta, Path) :- atomics_to_string([Testa | Coda], Path),
+    writeln(Path).
+
+
 
 
 
