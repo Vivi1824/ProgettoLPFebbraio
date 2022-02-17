@@ -177,39 +177,53 @@ porta_z(Scheme, UserInfo, Host, [Testa | Coda], ListPort) :- (Testa \= '/' ->
                                                               porta_z(Scheme, UserInfo, Host, Coda, List);
                                                              reverse(ListPort, ListInv),
                                                               crea_porta_z(ListInv, Coda, Scheme, UserInfo, Host, _)).
-crea_porta_z([Testa | Coda], ListPort, Scheme, UserInfo, Host, Porta) :-  writeln("prova"),
+crea_porta_z([Testa | Coda], ListPort, Scheme, UserInfo, Host, Porta) :-
     atomics_to_string([Testa | Coda], Porta),
-    writeln(Porta).
-   /* path_z_id44(Scheme, UserInfo, Host, Porta, ListPort, _, _)*/
+    writeln(Porta),
+   path_z_id44(Scheme, UserInfo, Host, Porta, ListPort, _, _).
 
 % AGGIUNGERE UN CONTROLLO SU id44 e id8 per vedere se iniziano con un
 % carattere alfanumerico
-
-riempi_lista_path_z(Scheme, UserInfo, Host, Porta, Cont, [Testa | Coda], Lista, [Testa | Lista]) :-
-    path_z_id44(Scheme, UserInfo, Host, Coda, Porta, [Testa | Lista], Cont).
+%IL PATH DA ERRORE
+riempi_lista_path_z(Scheme, UserInfo, Host, Porta, Cont, [Testa | Coda], List, [Testa | List] ) :-
+    path_z_id44(Scheme, UserInfo, Host, Porta, Coda, [Testa | List], Cont).
 non_inst(Var) :- \+(\+(Var=0)), \+(\+(Var=1)).
-inizializza_contatore(Cont, Ris) :- Cont is 0, Ris is Cont .
+inizializza_contatore(Cont, Ris) :- Cont is 1, Ris is Cont .
 path_z_id44(_, _, _, _, [], [], _).
-path_z_id44(Scheme, UserInfo, Host, Porta, [Testa, Testa1 | Coda], ListPath, Cont) :-
+path_z_id44(Scheme, UserInfo, Host, Porta, [Testa | Coda], [], Cont) :-
+    riempi_lista_path_z(Scheme, UserInfo, Host, Porta, Cont, [Testa | Coda], _, ListPath),!.
+path_z_id44(Scheme, UserInfo, Host, Porta, [Testa | Coda], ListPath, Cont) :-
+    (   non_inst(Cont) ->
+    inizializza_contatore(Cont, Cont1),
+    path_z_id44(Scheme, UserInfo, Host, Porta, [Testa | Coda], ListPath, Cont1);
+    (   Testa \= '(' ->
+    Cont2 is Cont + 1,
+    append([Testa], ListPath, List),
+        writeln(Cont2),
+        writeln(List),
+    path_z_id44(Scheme, UserInfo, Host, Porta, Coda, List, Cont2));!).
+
+/*path_z_id44(Scheme, UserInfo, Host, Porta, [Testa, Testa1 | Coda], ListPath, Cont) :-
     (   non_inst(Cont) ->
     inizializza_contatore(Cont, Ris),
-        riempi_lista_path_z(Scheme, UserInfo, Host, Porta, Ris, [Testa | Coda], [], List),
-        path_z_id44(Scheme, UserInfo, Host, Porta, [testa | Coda], List, Ris) ;
+        Cont is Ris, writeln(Cont);
     (   Testa \= '?' ->
     (   ((Testa == '.', Testa1 \= '(');
         (   Testa \= '.', Testa1 \= '(')) ->
     (   Cont < 44 ->
-    append([Testa], ListPath, List),
+    append([Testa], ListPath, List), writeln("prova"),
     (   Testa1 == '(' ->
     append([Testa1], List, List1),
     path_z_id8(Scheme, UserInfo, Host, Porta, Coda, List1, Cont1),
     Cont is Cont1 + 1;
     path_z_id44(Scheme, UserInfo, Host, Porta, [Testa1 | Coda], List, Cont1),
-    Cont is Cont1 + 1));
+    Cont is Cont1 + 1),
+    path_z_id44(Scheme, UserInfo, Host, Porta, [Testa1 | Coda], List, Cont1),
+    Cont is Cont1 + 1;
     (   (Cont == 44, Testa == '(') ->
     append([Testa], ListPath, List),
     path_z_id8(Scheme, UserInfo, Host, Porta, [Testa1 | Coda], List, Cont1),
-    Cont is Cont1 + 1; !); !); query_z())).
+    Cont is Cont1 + 1; !); !); query_z()))).
 path_z_id8(Scheme, UserInfo, Host, Porta, [Testa | Coda], ListPath, Cont) :-
     (   non_inst(Cont) ->
     inizializza_contatore(Cont, Ris),
@@ -231,20 +245,7 @@ crea_path_z([Testa | Coda], ListPath, Scheme, UserInfo, Host, Porta, Path) :- at
     writeln(Path),
     uri_display([Scheme, UserInfo, Host, Porta, Path, [], []], URI).
 query_z().
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+*/
 
 
 
