@@ -114,11 +114,12 @@
            (t(cond((equal(coerce "zos" 'list)(uri-scheme-def uri-structure))(uri-host-http uri-structure))
 ))))))))
 
-;potrei risolvere il problema creando una sotto lista fino al / e poi ricavo da quella sotto lista da @
-(defun uri-host-http(uri-structure) ;capire che tipo di stringa può capitare
-  (if(not(eql(member #\@ uri-structure)nil)) ;se non è nullo quindi c'è @
+(defun uri-host-http(uri-structure)
+  (if(not(eql(member #\@ uri-structure)nil))
       (sub-list uri-structure (+ (conta-chiocciola uri-structure) 1)
-                              (-(position #\/ uri-structure :from-end t)(+(conta-chiocciola uri-structure)1))))
+                              (-(position #\/ uri-structure :from-end t)(+(conta-chiocciola uri-structure)1)))
+      (sub-list uri-structure (+ (position #\/ uri-structure :from-end t) 1)nil)
+  )
 )
 
 (defun uri-host-mailto(uri-structure)
@@ -133,17 +134,15 @@
 ;======================================================================================
   ;URI-PORT
 ;======================================================================================
-; port deve avere solo numeri da 0 a 9
 (defun uri-port(uri-structure)
-   (uri-port-def uri-structure) 
+   (parse-integer "80")
 )
-(defun uri-port-def(uri-structure)
-  (cond((equal(coerce "http" 'list)(uri-scheme-def uri-structure))(uri-port-http uri-structure)))
-                    
-)
+;(defun uri-port-def(uri-structure)
+ ; (cond((equal(coerce "http" 'list)(uri-scheme-def uri-structure))(uri-port-http uri-structure)))
+;)
 
-(defun uri-port-http(uri-structure)
-  (parse-integer "80"))
+;(defun uri-port-http(uri-structure)
+ ; (parse-integer "80"))
 
 ;======================================================================================
   ;URI-PATH      
@@ -159,8 +158,11 @@
 ))))
 
 (defun uri-path-http(uri-structure)
+  (if(>(count #\/ uri-structure)2)
   (sub-list uri-structure (+ (position #\/ uri-structure :from-end t) 1)
                   (-(conta-puntodomanda uri-structure)(+(position #\/ uri-structure :from-end t)1))))
+  
+)
 
 (defun uri-path-zos(uri-structure) ;manca controllo carattere alfabetico id44
   (dot-control uri-structure)
