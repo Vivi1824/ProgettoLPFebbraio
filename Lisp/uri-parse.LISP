@@ -120,19 +120,7 @@
 (defun uri-host-http(uri-structure) ;capire che tipo di stringa può capitare
   (if(not(eql(member #\@ uri-structure)nil)) ;se non è nullo quindi c'è @
       (sub-list uri-structure (+ (conta-chiocciola uri-structure) 1)
-                              (-(conta-puntodomanda uri-structure)(+(conta-chiocciola uri-structure)1))))
-)
-
-(defun prova(uri-structure) ;funzione di prova
-;(if(and(eql(car uri-structure)#\/)(not(eql(car(cdr uri-structure)#\/))))
-  (cond((null uri-structure)nil)
-       ((eql(car uri-structure)#\@)(cdr uri-structure))
-       (t(prova(cdr uri-structure))))
-)
-       
-(defun funzione(listasmezz)
-;(sub-list listasmezz (conta-slash listasmezz) nil)
-  (reverse listasmezz)
+                              (-(position #\/ uri-structure :from-end t)(+(conta-chiocciola uri-structure)1))))
 )
 
 (defun uri-host-mailto(uri-structure)
@@ -169,8 +157,8 @@
 ))))
 
 (defun uri-path-http(uri-structure)
-  (sub-list uri-structure (+ (conta-slash uri-structure) 2)
-                  (-(conta-puntodomanda uri-structure)(+(conta-slash uri-structure)2))))
+  (sub-list uri-structure (+ (position #\/ uri-structure :from-end t) 1)
+                  (-(conta-puntodomanda uri-structure)(+(position #\/ uri-structure :from-end t)1))))
 
 (defun uri-path-zos(uri-structure) ;manca controllo carattere alfabetico id44
   (dot-control uri-structure)
@@ -277,17 +265,6 @@
          (t(conta-slash()))
     )
 )
-;conto finchè non diventano 3 slash
-(defun conta-slash-path(uri-structure)
-  ; (cond((null uri-structure)nil)
-   ;     ((eql(car uri-structure)#\/)((conta-slash-path uri-structure)countS))
-    ;    (t((conta-slash-path uri-structure)))
-   
-)
-
-(defun countP()(+ 0 1))
-
-(defun countS()(+ 0 1))
 
 (defun conta-chiocciola(uri-structure)
     (cond((null uri-structure)0)
