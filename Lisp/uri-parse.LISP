@@ -10,7 +10,6 @@
 ;=======================================================================================
 ;COSE DA FARE
 ;1) creare controlli per indirizzo ip           
-;3)capire come poter suddividere bene il path e l'host
 
 ;CASISTICHE DA CONTROLLARE
 ;1) accettazione scheme e basta
@@ -36,8 +35,7 @@
                  :port (uri-port uri-structure)
                  :path (uri-path uri-structure)
                  :query (uri-query uri-structure)
-                 :fragment (uri-fragment uri-structure)
-  )
+                 :fragment (uri-fragment uri-structure))
 )
 
 (defun crea-struttura(uri-structure)
@@ -140,9 +138,13 @@
    (uri-port-def uri-structure) 
 )
 (defun uri-port-def(uri-structure)
-  (if(equal(coerce "http" 'list)(uri-scheme-def uri-structure))
-      (format nil "~d" 80))              
+  (cond((equal(coerce "http" 'list)(uri-scheme-def uri-structure))(uri-port-http uri-structure)))
+                    
 )
+
+(defun uri-port-http(uri-structure)
+  (parse-integer "80"))
+
 ;======================================================================================
   ;URI-PATH      
 ;======================================================================================
