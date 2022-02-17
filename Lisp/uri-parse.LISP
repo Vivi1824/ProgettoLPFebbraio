@@ -118,6 +118,14 @@
   )
 )
 
+(defun ip-address(uri-structure)
+  (let ((ip (subseq uri-structure (+(position #\/ uri-structure :from-end t)1))))
+       (if(not(eql(car ip)#\.))())
+                                                                       
+  ))
+  
+)
+
 (defun uri-host-mailto(uri-structure)
   (cond((null uri-structure)nil)
        ((eql(car uri-structure)#\@)(cdr uri-structure))
@@ -159,7 +167,7 @@
   (if(and(<(conta-parentesi-aperta uri-structure) 44)
          (<(-(conta-parentesi-chiusa uri-structure)(conta-parentesi-aperta uri-structure))8))
   (sub-list uri-structure (+ (conta-slash uri-structure) 1)
-                  (-(conta-parentesi-chiusa uri-structure)(conta-slash uri-structure)))
+                          (-(conta-parentesi-chiusa uri-structure)(conta-slash uri-structure)))
   (write "Path errato"))
 )
 
@@ -180,6 +188,8 @@
         (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\9))
       (break "Non va bene inizio path"))
 )
+
+
 ;======================================================================================
   ;URI-QUERY
 ;======================================================================================
@@ -248,6 +258,13 @@
     (cond((null uri-structure)0)
          ((not(eql(car uri-structure)#\:))(+ 1(conta-duepunti(cdr uri-structure))))
          (t(conta-duepunti()))
+    )
+)
+
+(defun conta-punto(uri-structure)
+    (cond((null uri-structure)0)
+         ((not(eql(car uri-structure)#\.))(+ 1(conta-punto(cdr uri-structure))))
+         (t(conta-punto()))
     )
 )
 

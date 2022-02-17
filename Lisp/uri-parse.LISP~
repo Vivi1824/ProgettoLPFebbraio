@@ -10,12 +10,7 @@
 ;=======================================================================================
 ;COSE DA FARE
 ;1) creare controlli per indirizzo ip           
-;3)capire come poter suddividere bene il path e l'host
 
-;CASISTICHE DA CONTROLLARE
-;1) accettazione scheme e basta
-;2) accettazione scheme e host
-;3) non deve accettare userinfo senza host
 ;=======================================================================================
   ;STRUCTURE
 ;=======================================================================================
@@ -36,8 +31,7 @@
                  :port (uri-port uri-structure)
                  :path (uri-path uri-structure)
                  :query (uri-query uri-structure)
-                 :fragment (uri-fragment uri-structure)
-  )
+                 :fragment (uri-fragment uri-structure))
 )
 
 (defun crea-struttura(uri-structure)
@@ -116,23 +110,12 @@
            (t(cond((equal(coerce "zos" 'list)(uri-scheme-def uri-structure))(uri-host-http uri-structure))
 ))))))))
 
-;potrei risolvere il problema creando una sotto lista fino al / e poi ricavo da quella sotto lista da @
-(defun uri-host-http(uri-structure) ;capire che tipo di stringa può capitare
-  (if(not(eql(member #\@ uri-structure)nil)) ;se non è nullo quindi c'è @
+(defun uri-host-http(uri-structure)
+  (if(not(eql(member #\@ uri-structure)nil))
       (sub-list uri-structure (+ (conta-chiocciola uri-structure) 1)
-                              (-(conta-puntodomanda uri-structure)(+(conta-chiocciola uri-structure)1))))
-)
-
-(defun prova(uri-structure) ;funzione di prova
-;(if(and(eql(car uri-structure)#\/)(not(eql(car(cdr uri-structure)#\/))))
-  (cond((null uri-structure)nil)
-       ((eql(car uri-structure)#\@)(cdr uri-structure))
-       (t(prova(cdr uri-structure))))
-)
-       
-(defun funzione(listasmezz)
-;(sub-list listasmezz (conta-slash listasmezz) nil)
-  (reverse listasmezz)
+                              (-(position #\/ uri-structure :from-end t)(+(conta-chiocciola uri-structure)1)))
+      (sub-list uri-structure (+ (position #\/ uri-structure :from-end t) 1)nil)
+  )
 )
 
 (defun uri-host-mailto(uri-structure)
@@ -147,18 +130,13 @@
 ;======================================================================================
   ;URI-PORT
 ;======================================================================================
-; port deve avere solo numeri da 0 a 9
 (defun uri-port(uri-structure)
-   (uri-port-def uri-structure) 
+   (parse-integer "80")
 )
-(defun uri-port-def(uri-structure)
-  (if(equal(coerce "http" 'list)(uri-scheme-def uri-structure))
-      (format nil "~d" 80))              
-)
+
 ;======================================================================================
   ;URI-PATH      
 ;======================================================================================
-; path deve essere senza /,?,#,@,: poi /nel mezzo di nuovo l'identificatore e poi / (questo pezzo è facoltativo
 (defun uri-path(uri-structure)
   (if(not(eql(uri-path-def uri-structure)nil))
       (format nil "~{~a~}" (uri-path-def uri-structure)))
@@ -169,8 +147,11 @@
 ))))
 
 (defun uri-path-http(uri-structure)
-  (sub-list uri-structure (+ (conta-slash uri-structure) 2)
-                  (-(conta-puntodomanda uri-structure)(+(conta-slash uri-structure)2))))
+  (if(>(count #\/ uri-structure)2)
+  (sub-list uri-structure (+ (position #\/ uri-structure :from-end t) 1)
+                  (-(conta-puntodomanda uri-structure)(+(position #\/ uri-structure :from-end t)1))))
+  
+)
 
 (defun uri-path-zos(uri-structure) ;manca controllo carattere alfabetico id44
   (dot-control uri-structure)
@@ -178,7 +159,7 @@
   (if(and(<(conta-parentesi-aperta uri-structure) 44)
          (<(-(conta-parentesi-chiusa uri-structure)(conta-parentesi-aperta uri-structure))8))
   (sub-list uri-structure (+ (conta-slash uri-structure) 1)
-                  (-(conta-parentesi-chiusa uri-structure)(conta-slash uri-structure)))
+                          (-(conta-parentesi-chiusa uri-structure)(conta-slash uri-structure)))
   (write "Path errato"))
 )
 
@@ -199,10 +180,11 @@
         (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\9))
       (break "Non va bene inizio path"))
 )
+
+
 ;======================================================================================
   ;URI-QUERY
 ;======================================================================================
-;query deve avere caratteri qualsiasi ma senza #
 (defun uri-query(uri-structure)
   (if(not(eql(uri-query-def uri-structure)nil))
   (format nil "~{~a~}" (uri-query-def uri-structure)))
@@ -277,17 +259,6 @@
          (t(conta-slash()))
     )
 )
-;conto finchè non diventano 3 slash
-(defun conta-slash-path(uri-structure)
-  ; (cond((null uri-structure)nil)
-   ;     ((eql(car uri-structure)#\/)((conta-slash-path uri-structure)countS))
-    ;    (t((conta-slash-path uri-structure)))
-   
-)
-
-(defun countP()(+ 0 1))
-
-(defun countS()(+ 0 1))
 
 (defun conta-chiocciola(uri-structure)
     (cond((null uri-structure)0)
