@@ -11,10 +11,6 @@
 ;COSE DA FARE
 ;1) creare controlli per indirizzo ip           
 
-;CASISTICHE DA CONTROLLARE
-;1) accettazione scheme e basta
-;2) accettazione scheme e host
-;3) non deve accettare userinfo senza host
 ;=======================================================================================
   ;STRUCTURE
 ;=======================================================================================
@@ -137,17 +133,10 @@
 (defun uri-port(uri-structure)
    (parse-integer "80")
 )
-;(defun uri-port-def(uri-structure)
- ; (cond((equal(coerce "http" 'list)(uri-scheme-def uri-structure))(uri-port-http uri-structure)))
-;)
-
-;(defun uri-port-http(uri-structure)
- ; (parse-integer "80"))
 
 ;======================================================================================
   ;URI-PATH      
 ;======================================================================================
-; path deve essere senza /,?,#,@,: poi /nel mezzo di nuovo l'identificatore e poi / (questo pezzo è facoltativo
 (defun uri-path(uri-structure)
   (if(not(eql(uri-path-def uri-structure)nil))
       (format nil "~{~a~}" (uri-path-def uri-structure)))
@@ -194,7 +183,6 @@
 ;======================================================================================
   ;URI-QUERY
 ;======================================================================================
-;query deve avere caratteri qualsiasi ma senza #
 (defun uri-query(uri-structure)
   (if(not(eql(uri-query-def uri-structure)nil))
   (format nil "~{~a~}" (uri-query-def uri-structure)))
