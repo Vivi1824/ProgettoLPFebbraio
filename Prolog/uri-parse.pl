@@ -201,8 +201,29 @@ path_z_id44(Scheme, UserInfo, Host, Porta, [Testa | Coda], ListPath, Cont) :-
     append([Testa], ListPath, List),
         writeln(Cont2),
         writeln(List),
-    path_z_id44(Scheme, UserInfo, Host, Porta, Coda, List, Cont2); !)).
+    path_z_id44(Scheme, UserInfo, Host, Porta, Coda, List, Cont2);
+    (   controlla_contatore(Cont) ->
+    append([Testa], ListPath, List),
+    path_z_id8(Scheme, UserInfo, Host, Porta, Coda, List, _);!))).
 
+controlla_contatore(Cont) :-
+    (Cont =< 44 -> true; fail).
+controlla_contatore_id8(Cont) :-
+    (Cont =< 8 -> true; fail).
+path_z_id8(Scheme, UserInfo, Host, Porta, [Testa | Coda], ListPath, Cont) :-
+    (   non_inst(Cont) ->
+    inizializza_contatore(Cont, Cont1),
+        path_z_id8(Scheme, UserInfo, Host, Porta, [Testa | Coda], ListPath, Cont1);
+    (   Testa \= ')' ->
+    Cont2 is Cont + 1,
+    append([Testa], ListPath, List),
+    path_z_id8(Scheme, UserInfo, Host, Porta, Coda, List, Cont2);
+    (   controlla_contatore_id8(Cont) ->
+    append([Testa], ListPath, List),
+        reverse(List, ListInv),
+    crea_path_z(Scheme, UserInfo, Host, Porta, ListInv, _ ); !))).
+crea_path_z(Scheme, UserInfo, Host, Porta, [Testa | Coda], Path) :-
+    atomics_to_string([Testa | Coda], Path), writeln(Path).
 %FARE METODO PER CONTROLLO DEL CONTATORE SE =< 44
 
 /*path_z_id44(Scheme, UserInfo, Host, Porta, [Testa, Testa1 | Coda], ListPath, Cont) :-

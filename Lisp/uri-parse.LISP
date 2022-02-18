@@ -8,10 +8,6 @@
 ;=======================================================================================
 
 ;=======================================================================================
-;COSE DA FARE
-;1) creare controlli per indirizzo ip           
-
-;=======================================================================================
   ;STRUCTURE
 ;=======================================================================================
 (defstruct uristruc 
@@ -118,14 +114,6 @@
   )
 )
 
-(defun ip-address(uri-structure)
-  (let ((ip (subseq uri-structure (+(position #\/ uri-structure :from-end t)1))))
-       (if(not(eql(car ip)#\.))())
-                                                                       
-  ))
-  
-)
-
 (defun uri-host-mailto(uri-structure)
   (cond((null uri-structure)nil)
        ((eql(car uri-structure)#\@)(cdr uri-structure))
@@ -163,19 +151,19 @@
 
 (defun uri-path-zos(uri-structure) ;manca controllo carattere alfabetico id44
   (dot-control uri-structure)
-  (char-control uri-structure)
+  (digit-control uri-structure)
   (if(and(<(conta-parentesi-aperta uri-structure) 44)
          (<(-(conta-parentesi-chiusa uri-structure)(conta-parentesi-aperta uri-structure))8))
   (sub-list uri-structure (+ (conta-slash uri-structure) 1)
                           (-(conta-parentesi-chiusa uri-structure)(conta-slash uri-structure)))
-  (write "Path errato"))
+  (error "Path errato"))
 )
 
 (defun dot-control(uri-structure)
    (if(eql(nth(-(conta-parentesi-aperta uri-structure)1) uri-structure)#\.)
-      (break "Path errato, c'è un punto alla fine di Id44"))
+      (error  "Path errato, c'è un punto alla fine di Id44"))
 )
-(defun char-control(uri-structure)
+(defun digit-control(uri-structure)
   (if(or(eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\0)
         (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\1)
         (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\2)
@@ -186,7 +174,7 @@
         (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\7)
         (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\8)
         (eql(nth(+(conta-parentesi-aperta uri-structure)1)uri-structure)#\9))
-      (break "Non va bene inizio path"))
+      (error "Non va bene inizio path"))
 )
 
 

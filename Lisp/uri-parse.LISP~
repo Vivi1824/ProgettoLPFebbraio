@@ -118,6 +118,14 @@
   )
 )
 
+(defun ip-address(uri-structure)
+  (let ((ip (subseq uri-structure (+(position #\/ uri-structure :from-end t)1))))
+       (if(not(eql(car ip)#\.))())
+                                                                       
+  ))
+  
+)
+
 (defun uri-host-mailto(uri-structure)
   (cond((null uri-structure)nil)
        ((eql(car uri-structure)#\@)(cdr uri-structure))
@@ -250,6 +258,13 @@
     (cond((null uri-structure)0)
          ((not(eql(car uri-structure)#\:))(+ 1(conta-duepunti(cdr uri-structure))))
          (t(conta-duepunti()))
+    )
+)
+
+(defun conta-punto(uri-structure)
+    (cond((null uri-structure)0)
+         ((not(eql(car uri-structure)#\.))(+ 1(conta-punto(cdr uri-structure))))
+         (t(conta-punto()))
     )
 )
 
