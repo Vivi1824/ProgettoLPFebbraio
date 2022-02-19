@@ -102,9 +102,7 @@
 (defun uri-host-def(uri-structure)
   (cond((equal(coerce "http" 'list)(uri-scheme-def uri-structure))(uri-host-http uri-structure))
        (t(cond((equal(coerce "mailto" 'list)(uri-scheme-def uri-structure))(uri-host-mailto uri-structure)) 
-         (t(cond((equal(coerce "news" 'list)(uri-scheme-def uri-structure))(uri-host-news uri-structure))
-           (t(cond((equal(coerce "zos" 'list)(uri-scheme-def uri-structure))(uri-host-http uri-structure))
-))))))))
+         (t(cond((equal(coerce "news" 'list)(uri-scheme-def uri-structure))(uri-host-news uri-structure))))))))
 
 (defun uri-host-http(uri-structure)
   (if(not(eql(member #\@ uri-structure)nil))
