@@ -137,6 +137,10 @@
   ;URI-PORT
 ;==============================================================================
 (defun uri-port(uri-structure)
+  (cond((equal(coerce "http" 'list)(uri-scheme-def uri-structure))
+        (uri-port-http uri-structure)))
+)
+(defun uri-port-http(uri-structure)
    (parse-integer "80"))
 ;==============================================================================
   ;URI-PATH      
